@@ -910,7 +910,7 @@ declare namespace Office {
          */
         Project,
         /**
-         * The Office application is Microsoft Access.
+         * The Office application is Microsoft Access. Warning: Microsoft Access is no longer supported.
          * 
          * @deprecated Microsoft Access is no longer supported.
          */
@@ -3329,10 +3329,8 @@ declare namespace Office {
         /**
          * Shows the task pane associated with the add-in.
          * @returns A promise that is resolved when the UI is shown.
-         * 
+         *
          * @remarks
-         * This method applies only to centrally deployed or sideloaded add-ins. For add-ins published in the Microsoft Marketplace, the method is ignored and the task pane doesn't open.
-         * 
          * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/shared-runtime-requirement-sets | SharedRuntime 1.1}
          */
         showAsTaskpane(): Promise<void>;
@@ -3680,7 +3678,7 @@ declare namespace Office {
          *
          * **Hosts**: Excel, OneNote, Outlook, PowerPoint, Word
          * 
-         * **Requirement set**: NestedAppAuth 1.1
+         * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/nested-app-auth-requirement-sets | NestedAppAuth 1.1}
          * 
          * @returns Promise to the AuthContext object.
          */
@@ -3743,6 +3741,10 @@ declare namespace Office {
     }
     /**
      * Represents the user information which can be passed to the Microsoft Authentication Library for JavaScript (MSAL.js).
+     * 
+     * @remarks
+     * 
+     * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/nested-app-auth-requirement-sets | NestedAppAuth 1.1}
      */
     interface AuthContext {
         /**
@@ -4877,6 +4879,11 @@ declare namespace Office {
         platform: Office.PlatformType;
         /**
         * Gets the version of Office on which the add-in is running.
+        *
+        * @remarks
+        * In Office on Windows, the value returned by the `version` property uses the format 16.0.\<build\>.\<revision\>.
+        * To compare a version shown as Version xxxx (Build xxxxx.xxxxx) with the `version` value, use the full build number (\<build\>.\<revision\>).
+        * For example, in Version 2603 (Build 19822.20000), use 19822.20000 for comparison.
         */
         version: string;
     }
@@ -4954,9 +4961,19 @@ declare namespace Office {
          */
         id: string;
         /**
-         * Indicates whether the control should be enabled or disabled. The default is true.
+         * Indicates whether the control should be enabled or disabled. The default is `true`.
          */
         enabled?: boolean;
+        /**
+         * Specifies whether the control is shown or hidden on a custom tab. The default is `true`.
+         *
+         * @remarks
+         *
+          * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/ribbon-api-requirement-sets | RibbonApi 1.3}
+          *
+          * **Important**: The visibility of buttons and menu controls can be configured, but the visibility of individual items within a menu can't be configured.
+         */
+        visible?: boolean;
     }
     /**
      * Represents an XML node in a tree in a document.
@@ -7424,7 +7441,7 @@ declare namespace Office {
      */
     interface GetFileOptions {
         /**
-         * The size of the slices in bytes. The maximum (and the default) is 4194304 (4MB).
+         * The size of the slices in bytes. The maximum (and the default) is 4194304 (4 MB).
          */
         sliceSize?: number
         /**
@@ -7496,6 +7513,14 @@ declare namespace Office {
           * When the `Group` object is part of an {@link Office.RibbonUpdaterData} object passed to the `requestUpdate` method of {@link Office.Ribbon}, the `controls` properties of the various {@link Office.Group} objects specify which controls have their enabled status changed; the `controls` property of the `Group` object's parent `Tab` object is ignored. 
           */
          controls?: Control[];
+         /**
+          * Specifies whether the group of controls is shown or hidden on a custom tab.
+          *
+          * @remarks
+          *
+          * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/ribbon-api-requirement-sets | RibbonApi 1.3}
+          */
+         visible?: boolean;
     }
     /**
      * Represents a binding in two dimensions of rows and columns.
@@ -8961,7 +8986,7 @@ declare namespace Office {
     /**
      * Represents a single slide in a PowerPoint presentation. 
      * This interface is used as part of the {@link Office.SlideRange} object returned by
-     * {@link Office.Document.getSelectedDataAsync} when called with {@link Office.CoercionType.SlideRange}.
+     * {@link Office.Document | Office.Document.getSelectedDataAsync} when called with {@link Office.CoercionType.SlideRange}.
      */
     interface Slide {
         /**
@@ -8979,7 +9004,7 @@ declare namespace Office {
     }
     /**
      * Represents the selected slides in a PowerPoint presentation.
-     * This object is returned when calling {@link Office.Document.getSelectedDataAsync} with {@link Office.CoercionType.SlideRange} in PowerPoint.
+     * This object is returned when calling {@link Office.Document | Office.Document.getSelectedDataAsync} with {@link Office.CoercionType.SlideRange} in PowerPoint.
      *
      */
     interface SlideRange {
@@ -9003,19 +9028,31 @@ declare namespace Office {
          *
          * **Requirement set**: {@link https://learn.microsoft.com/javascript/api/requirement-sets/common/task-pane-api-requirement-sets | TaskPaneApi 1.1}
          *
-         * **Important**: The default width of the task pane of an add-in varies depending on the platform.
+         * **Important**: The minimum and maximum width constraints vary by platform.
+         *
+         * - **Web (Excel)**: Between 350 and 500 px (inclusive)
+         *
+         * - **Web (Word)**: Between 330 and 500 px (inclusive)
+         *
+         * - **Windows**: Between 86 px and 50% of the client window
+         *
+         * - **Mac**: Between 270 px and 50% of the client window
+         * 
+         * The default width of the task pane of an add-in varies depending on the platform.
          *
          * - **Web (Excel)**: 350 px
          *
          * - **Web (Word)**: 330 px
          *
-         * - **Windows, Mac**: 51 px
+         * - **Windows**: 320 px
+         *
+         * - **Mac**: 270 px
          *
          * If you pass a width beyond the minimum and maximum constraints, the task pane isn't resized and no error is shown.
          *
-         * @param width The width of a task pane in pixels. The minimum and maximum constraints vary by platform. In Excel on the web, the width must be between
-         *              350 and 500 px (inclusive). In Word on the web, the width must be between 330 and 500 px (inclusive). In Office on Windows and on Mac, the width
-         *              must be between 51 px and 50% of the client window.
+         * The `setWidth` method isn't supported in PowerPoint on the web.
+         *
+         * @param width The width of a task pane in pixels.
          */
         setWidth(width: number): void;
     }
@@ -9216,7 +9253,7 @@ declare namespace Office {
          *
          * @remarks
          *
-         * **Applications**: Excel, Outlook (Minimum requirement set: Mailbox 1.5), PowerPoint, Word
+         * **Applications**: Excel, Outlook (Minimum requirement set: Mailbox 1.5), PowerPoint
          *
          * **Requirement sets**:
          *
@@ -10798,6 +10835,33 @@ declare namespace Office {
             Subject = "subject"
         }
         /**
+         * Specifies the status of Exchange Web Services (EWS) callback tokens or REST API tokens in an organization.
+         *
+         * @remarks
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+         *
+         * **Important**: Legacy Exchange Online user identity tokens and callback tokens are no longer supported and are turned off across all Microsoft 365 tenants.
+         * If an Outlook add-in requires delegated user access or user identity, we recommend using MSAL (Microsoft Authentication Library) and nested app authentication (NAA).
+         * Exchange user identity tokens are still supported for Exchange on-premises. For more information, see
+         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/faq-nested-app-auth-outlook-legacy-tokens | Nested app authentication FAQ}.
+         */
+        enum TokenStatus {
+            /**
+             * EWS callback tokens or REST API tokens are turned off in the organization.
+             */
+            Disabled = 0,
+            /**
+             * EWS callback tokens or REST API tokens are supported in the organization.
+             */
+            Enabled = 1,
+            /**
+             * The mailbox is hosted in an Exchange Online environment where EWS tokens are turned off and are no longer supported.
+             */
+            Removed = 2
+        }
+        /**
          * Specifies the week of the month.
          *
          * @remarks
@@ -11059,7 +11123,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          */
         sensitivityLabel: SensitivityLabel;
         /**
@@ -11088,7 +11152,8 @@ declare namespace Office {
         /**
          * Manages the {@link Office.SessionData | SessionData} of an item in Compose mode.
          *
-         * **Important**: The entire SessionData object is limited to 50,000 characters per add-in.
+         * **Important**: In Outlook clients that support Mailbox 1.15 or earlier, the entire SessionData object for each mail item is limited to 50,000 characters per add-in.
+         * In clients that support Mailbox 1.16 or later, the character limit per add-in is 2,621,440 characters.
          *
          * @remarks
          * [Api set: Mailbox 1.11]
@@ -11261,7 +11326,7 @@ declare namespace Office {
          *
          * - `NumberOfAttachmentsExceeded`: The message or appointment has too many attachments.
          *
-         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 27,892,122 characters (about 25 MB).
+         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 34,865,152 characters. This corresponds to a maximum attachment size of 25 MB before Base64 encoding.
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -11308,7 +11373,7 @@ declare namespace Office {
          *
          * - `NumberOfAttachmentsExceeded`: The message or appointment has too many attachments.
          *
-         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 27,892,122 characters (about 25 MB).
+         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 34,865,152 characters. This corresponds to a maximum attachment size of 25 MB before Base64 encoding.
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter
          *                             of type `Office.AsyncResult`.
@@ -11567,8 +11632,13 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Appointment Organizer
          *
-         * **Important**: In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
+         * **Important**:
+         *
+         * - In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
          * include a link to the file in the mail item. However, since only a link is included, `getAttachmentsAsync` doesn't return this attachment.
+         *
+         * - For attachments of type `Office.MailboxEnums.AttachmentType.Item`, the size and serialized content returned by `getAttachmentsAsync` might differ between calls
+         * made from an `OnMessageSend` or `OnAppointmentSend` event handler. To reliably detect attachment changes, handle the `OnMessageAttachmentsChanged` or `OnAppointmentAttachmentsChanged` event instead.
          *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -11587,8 +11657,13 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Appointment Organizer
          *
-         * **Important**: In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
+         * **Important**:
+         *
+         * - In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
          * include a link to the file in the mail item. However, since only a link is included, `getAttachmentsAsync` doesn't return this attachment.
+         *
+         * - For attachments of type `Office.MailboxEnums.AttachmentType.Item`, the size and serialized content returned by `getAttachmentsAsync` might differ between calls
+         * made from an `OnMessageSend` or `OnAppointmentSend` event handler. To reliably detect attachment changes, handle the `OnMessageAttachmentsChanged` or `OnAppointmentAttachmentsChanged` event instead.
          *
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of
          *                 type `Office.AsyncResult`. If the call fails, the `asyncResult.error` property will contain an error code with the reason for
@@ -11870,7 +11945,7 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Appointment Organizer
          *
-         * *Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
+         * **Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
          * To remove an inline attachment, first get the item's body, then remove any references of the attachment from its contents.
          * Use the {@link https://learn.microsoft.com/javascript/api/outlook/office.body | Office.Body} APIs to get and set the body of an item.
          *
@@ -11904,7 +11979,7 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Appointment Organizer
          *
-         * *Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
+         * **Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
          * To remove an inline attachment, first get the item's body, then remove any references of the attachment from its contents.
          * Use the {@link https://learn.microsoft.com/javascript/api/outlook/office.body | Office.Body} APIs to get and set the body of an item.
          *
@@ -12492,11 +12567,13 @@ declare namespace Office {
          * The `optionalAttendees` property returns an array that contains an {@link Office.EmailAddressDetails | EmailAddressDetails} object for
          * each optional attendee to the meeting. The maximum number of attendees returned varies per Outlook client.
          *
-         * - Windows: 500 attendees
+         * - Windows (classic - Mailbox 1.15 and earlier): 500 attendees
+         *
+         * - Web, Windows (new, classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, classic Mac UI, iOS: 100 attendees
          *
-         * - New Mac UI, web browser: No limit
+         * - New Mac UI: No limit
          *
          * @remarks
          *
@@ -12540,11 +12617,13 @@ declare namespace Office {
          * The `requiredAttendees` property returns an array that contains an {@link Office.EmailAddressDetails | EmailAddressDetails} object for
          * each required attendee to the meeting. The maximum number of attendees returned varies per Outlook client.
          *
-         * - Windows: 500 attendees
+         * - Windows (classic - Mailbox 1.15 and earlier): 500 attendees
+         *
+         * - Web, Windows (new, classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, classic Mac UI, iOS: 100 attendees
          *
-         * - New Mac UI, web browser: No limit
+         * - New Mac UI: No limit
          *
          * @remarks
          *
@@ -13323,17 +13402,16 @@ declare namespace Office {
         /**
          * Gets the content identifier of an inline attachment.
          *
-         * **Important**:
+         * @remarks
+         * [Api set: Mailbox 1.16]
          *
-         * - The `contentId` property is only supported in Outlook on the web, the new Outlook on Windows, and classic Outlook on Windows (preview).
-         * To preview the `contentId` property in classic Outlook on Windows, your Outlook client must run Version 2510 (Build 19312.20000)
-         * or later and must be on the Beta Channel. For more information, see {@link https://aka.ms/Msft365InsiderProgram | Microsoft 365 Insider Program}.
-         *
-         * - Changes to how inline images are represented in the HTML body of Outlook emails in Outlook on the web and the new Outlook on Windows released on November 15, 2025.
+         * **Important**: Changes to how inline images are represented in the HTML body of Outlook emails in
+         * Outlook on the web and the new Outlook on Windows released on November 15, 2025.
          * Previously, the attachment ID of the image appeared in the `src` attribute of the applicable `<img>` element.
          * Now, the image is represented by a content ID (`cid`) in the `src` attribute instead.
-         * If you parse the attachment ID from the HTML editor or get the Base64-encoded value of the image from the URL in the `src` attribute, you must update your add-in's parsing logic.
-         * For more information, see {@link https://devblogs.microsoft.com/microsoft365dev/changes-to-inline-images-in-outlook | Changes to inline image representation in Outlook on the web and new Outlook for Windows}.
+         * If you parse the attachment ID from the HTML editor or get the Base64-encoded value of the image from the URL in the
+         * `src` attribute, you must update your add-in's parsing logic. For more information, see
+         * {@link https://devblogs.microsoft.com/microsoft365dev/changes-to-inline-images-in-outlook | Changes to inline image representation in Outlook on the web and new Outlook for Windows}.
          */
         contentId: string;
         /**
@@ -13426,18 +13504,15 @@ declare namespace Office {
          * Gets the content identifier of an inline attachment.
          *
          * @remarks
+         * [Api set: Mailbox 1.16]
          *
-         * **Important**:
-         *
-         * - The `contentId` property is only supported in Outlook on the web, the new Outlook on Windows, and classic Outlook on Windows (preview).
-         * To preview the `contentId` property in classic Outlook on Windows, your Outlook client must run Version 2510 (Build 19312.20000)
-         * or later and must be on the Beta Channel. For more information, see {@link https://aka.ms/Msft365InsiderProgram | Microsoft 365 Insider Program}.
-         *
-         * - Changes to how inline images are represented in the HTML body of Outlook emails in Outlook on the web and the new Outlook on Windows released on November 15, 2025.
+         * **Important**: Changes to how inline images are represented in the HTML body of Outlook emails in
+         * Outlook on the web and the new Outlook on Windows released on November 15, 2025.
          * Previously, the attachment ID of the image appeared in the `src` attribute of the applicable `<img>` element.
          * Now, the image is represented by a content ID (`cid`) in the `src` attribute instead.
-         * If you parse the attachment ID from the HTML editor or get the Base64-encoded value of the image from the URL in the `src` attribute, you must update your add-in's parsing logic.
-         * For more information, see {@link https://devblogs.microsoft.com/microsoft365dev/changes-to-inline-images-in-outlook | Changes to inline image representation in Outlook on the web and new Outlook for Windows}.
+         * If you parse the attachment ID from the HTML editor or get the Base64-encoded value of the image from the URL in the
+         * `src` attribute, you must update your add-in's parsing logic. For more information, see
+         * {@link https://devblogs.microsoft.com/microsoft365dev/changes-to-inline-images-in-outlook | Changes to inline image representation in Outlook on the web and new Outlook for Windows}.
          */
         contentId: string;
         /**
@@ -13767,8 +13842,8 @@ declare namespace Office {
          * make it render efficiently with its rendering engine. This means that the value returned from a subsequent call to the `Body.getAsync` method
          * (introduced in Mailbox 1.3) won't necessarily contain the exact value that was passed in the previous `prependAsync` call.
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - In Outlook on Android and on iOS, this method isn't supported in the Message Compose mode. Only the Appointment Organizer mode is
          * supported. For more information on supported APIs in Outlook mobile, see
@@ -13817,8 +13892,8 @@ declare namespace Office {
          * make it render efficiently with its rendering engine. This means that the value returned from a subsequent call to the `Body.getAsync` method
          * (introduced in Mailbox 1.3) won't necessarily contain the exact value that was passed in the previous `prependAsync` call.
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - In Outlook on Android and on iOS, this method isn't supported in the Message Compose mode. Only the Appointment Organizer mode is
          * supported. For more information on supported APIs in Outlook mobile, see
@@ -13957,8 +14032,8 @@ declare namespace Office {
          * be the exact same value that was previously passed in the `Body.setAsync` method. The client may modify the value passed to `setAsync` to make it
          * render efficiently with its rendering engine.
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - In Outlook on Windows (classic) and on Mac, the add-in user isn't able to revert this action with the **Undo** command.
          *
@@ -14027,8 +14102,8 @@ declare namespace Office {
          * be the exact same value that was previously passed in the `Body.setAsync` method. The client may modify the value passed to `setAsync` to make it
          * render efficiently with its rendering engine.
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - In Outlook on Windows (classic) and on Mac, the add-in user isn't able to revert this action with the **Undo** command.
          *
@@ -14085,8 +14160,8 @@ declare namespace Office {
          *
          * **Important*:
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - SVG files aren't supported. Use JPG or PNG files instead.
          *
@@ -14127,8 +14202,8 @@ declare namespace Office {
          *
          * **Important*:
          *
-         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP"
-         * (see the **Examples** section for a sample).
+         * - When including links in HTML markup, you can disable online link preview by setting the `id` attribute on the anchor (\<a\>) to "LPNoLP".
+         * For example, `'<a id="LPNoLP" href="http://www.contoso.com">Click here!</a>'`.
          *
          * - SVG files aren't supported. Use JPG or PNG files instead.
          *
@@ -14559,6 +14634,8 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
          *
+         * **Important**: In classic Outlook on Windows, custom properties saved to a mail item in read mode remain accessible while the item is being forwarded.
+         *
          * @param name - The name of the custom property to be returned.
          */
         get(name: string): any;
@@ -14579,6 +14656,8 @@ declare namespace Office {
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read item**
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+         *
+         * **Important**: In classic Outlook on Windows, custom properties saved to a mail item in read mode remain accessible while the item is being forwarded.
          */
         getAll(): any;
         /**
@@ -14671,6 +14750,146 @@ declare namespace Office {
          * @param value - The value of the property to be set.
          */
         set(name: string, value: string): void;
+    }
+    /**
+     * Represents an attachment in a decrypted message.
+     *
+     * @remarks
+     *
+     * [Api set: Mailbox 1.16]
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+     *
+     * To learn how to develop an encryption add-in in Outlook, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/encryption-decryption | Create an encryption Outlook add-in}.
+     */
+    interface DecryptedMessageAttachment {
+        /**
+         * Specifies the type of attachment.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         *
+         * **Important**: Attachments of type `MailboxEnums.AttachmentType.Item` aren't currently supported.
+         */
+        attachmentType: MailboxEnums.AttachmentType;
+        /**
+         * Specifies the Base64-encoded content of the attachment.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         *
+         * **Important**: The `content` property isn't supported by attachments of type `MailboxEnums.AttachmentType.Cloud`. 
+         */
+        content: string;
+        /**
+         * Specifies the content identifier of an inline attachment.
+         *
+         * The `contentId` property must be specified if `isInline` is set to `true`.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         *
+         * **Important**: When images are added to a message as inline attachments, they're automatically assigned a content ID. In the body of a message, the content ID of an inline attachment is
+         * specified in the `src` attribute of the `<img>` element (for example, `<img width=96 height=96 id="Picture_1" src="cid:image001.png@01DC1E6F.FC7C7410">`).
+         * To easily identify and provide these inline attachments during decryption, we recommend saving the content IDs of inline attachments to the message header during encryption.
+         * Call `Office.context.mailbox.item.getAttachmentsAsync` to get the content ID of an inline attachment. Then, call `Office.context.mailbox.item.internetHeaders.setAsync` to save the ID to the header of the message.
+         */
+        contentId?: string;
+        /**
+         * If true, specifies that the decrypted attachment appears as an image in the body of the message instead of in the attachment list.
+         * If the `isInline` property isn't specified, its value is set to false.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        isInline?: boolean;
+        /**
+         * Specifies the name of the attachment.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        name: string;
+        /**
+         * Specifies the URL reference path of the attachment if its type is `MailboxEnums.AttachmentType.Cloud`.
+         * The `path` property must be specified for attachments of type `MailboxEnums.AttachmentType.Cloud`.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        path?: string;
+    }
+    /**
+     * Represents the body of a decrypted message.
+     *
+     * @remarks
+     *
+     * [Api set: Mailbox 1.16]
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+     *
+     * To learn how to develop an encryption add-in in Outlook, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/encryption-decryption | Create an encryption Outlook add-in}.
+     */
+    interface DecryptedMessageBody {
+        /**
+         * Specifies the format of the body of a message.
+         * The body of a message can be formatted as `Office.CoercionType.Html` or `Office.CoercionType.Text`.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        coercionType: Office.CoercionType;
+        /**
+         * Specifies the content displayed in the body of the message.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        content: string;
     }
     /**
      * The `DelayDeliveryTime` object enables you to manage the delayed delivery date and time of a message.
@@ -14798,6 +15017,23 @@ declare namespace Office {
      * property to get similar information.
      */
     interface Diagnostics {
+        /**
+         * Gets an object to identify whether Exchange Web Services (EWS) callback tokens are supported in an organization.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+         *
+         * **Important**: Legacy Exchange Online user identity tokens and callback tokens are no longer supported and are turned off across all Microsoft 365 tenants.
+         * If an Outlook add-in requires delegated user access or user identity, we recommend using MSAL (Microsoft Authentication Library) and nested app authentication (NAA).
+         * Exchange user identity tokens are still supported for Exchange on-premises. For more information, see
+         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/faq-nested-app-auth-outlook-legacy-tokens | Nested app authentication FAQ}.
+         */
+        ews: Ews;
         /**
          * Gets a string that represents the type of Outlook client.
          *
@@ -15399,6 +15635,72 @@ declare namespace Office {
          * @deprecated Use {@link https://learn.microsoft.com/office/dev/add-ins/outlook/contextual-outlook-add-ins | regular expression rules} instead.
          */
         urls: string[];
+    }
+    /**
+     * Provides methods to determine if Exchange Web Services (EWS) callback tokens are supported in an organization.
+     *
+     * @remarks
+     *
+     * [Api set: Mailbox 1.16]
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read item**
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+     *
+     * **Important**: Legacy Exchange Online user identity tokens and callback tokens are no longer supported and are turned off across all Microsoft 365 tenants.
+     * If an Outlook add-in requires delegated user access or user identity, we recommend using MSAL (Microsoft Authentication Library) and nested app authentication (NAA).
+     * Exchange user identity tokens are still supported for Exchange on-premises. For more information, see
+     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/faq-nested-app-auth-outlook-legacy-tokens | Nested app authentication FAQ}.
+     */
+    interface Ews {
+        /**
+         * Gets the status of EWS callback tokens in an organization.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+         *
+         * **Important**:
+         *
+         * - The `getTokenStatusAsync` method isn't supported if you load an add-in in an Outlook.com or Gmail mailbox.
+         *
+         * - Calling the `getTokenStatusAsync` method in compose mode requires you to have saved the item. The `saveAsync` method requires a minimum permission level of **read/write item**.
+         *
+         * @param options - An object literal that contains one or more of the following properties. `asyncContext`: Any data you want to access in the callback function.
+         *                  `isRest`: Identifies whether the token needed is for EWS or Outlook REST APIs. By default, the `isRest` property is set to `false`.
+         * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter of type Office.AsyncResult.
+         *                   The `asyncResult.value` property returns the token status, which can be `Office.MailboxEnums.TokenStatus.Enabled`, `Office.MailboxEnums.TokenStatus.Disabled`, or
+         *                   `Office.MailboxEnums.TokenStatus.Removed`. A `Office.MailboxEnums.TokenStatus.Removed` status indicates that the mailbox is hosted in an Exchange Online environment
+         *                   where legacy Exchange tokens are turned off and are no longer supported.
+         */
+        getTokenStatusAsync(options: Office.AsyncContextOptions & { isRest?: boolean }, callback: (asyncResult: Office.AsyncResult<MailboxEnums.TokenStatus>) => void): void;
+        /**
+         * Gets the status of EWS callback tokens in an organization.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose or Read
+         *
+         * **Important**:
+         *
+         * - The `getTokenStatusAsync` method isn't supported if you load an add-in in an Outlook.com or Gmail mailbox.
+         *
+         * - Calling the `getTokenStatusAsync` method in compose mode requires you to have saved the item. The `saveAsync` method requires a minimum permission level of **read/write item**.
+         *
+         * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter of type Office.AsyncResult.
+         *                   The `asyncResult.value` property returns the token status, which can be `Office.MailboxEnums.TokenStatus.Enabled`, `Office.MailboxEnums.TokenStatus.Disabled`, or
+         *                   `Office.MailboxEnums.TokenStatus.Removed`. A `Office.MailboxEnums.TokenStatus.Removed` status indicates that the mailbox is hosted in an Exchange Online environment
+         *                   where legacy Exchange tokens are turned off and are no longer supported.
+         */
+        getTokenStatusAsync(callback: (asyncResult: Office.AsyncResult<MailboxEnums.TokenStatus>) => void): void;
     }
     /**
      * Provides a method to get the from value of a message in an Outlook add-in.
@@ -16013,7 +16315,7 @@ declare namespace Office {
          * - Only the `getAsync` method of the SensitivityLabel object is supported.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          */
         sensitivityLabel: SensitivityLabel;
         /**
@@ -17879,24 +18181,7 @@ declare namespace Office {
         /**
          * Provides diagnostic information to an Outlook add-in.
          *
-         * Contains the following members.
-         *
-         *  - `hostName` (string): A string that represents the name of the Office application.
-         * It should be one of the following values: `Outlook`, `newOutlookWindows`, `OutlookWebApp`, `OutlookIOS`, or `OutlookAndroid`.
-         * **Note**: The "Outlook" value is returned for Outlook on Windows (classic) and on Mac.
-         *
-         *  - `hostVersion` (string): A string that represents the version of either the Office application or the Exchange Server (e.g., "15.0.468.0").
-         * If the mail add-in is running in Outlook on Windows (classic), on Mac, or on mobile devices, the `hostVersion` property returns the version of the
-         * Outlook client. In Outlook on the web and {@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new Outlook on Windows},
-         * the property returns the version of the Exchange Server.
-         *
-         *  - `OWAView` (`MailboxEnums.OWAView` or string): An enum (or string literal) that represents the current view of Outlook on the web.
-         * If the application is not Outlook on the web, then accessing this property results in undefined.
-         * Outlook on the web has three views (`OneColumn` - displayed when the screen is narrow, `TwoColumns` - displayed when the screen is wider,
-         * and `ThreeColumns` - displayed when the screen is wide) that correspond to the width of the screen and the window, and the number of columns
-         * that can be displayed.
-         *
-         * More information is under {@link Office.Diagnostics}.
+         * For information about the diagnostic properties you can access, see {@link Office.Diagnostics}.
          *
          * @remarks
          *
@@ -18978,8 +19263,9 @@ declare namespace Office {
     /**
      * The `MailboxEvent` object is passed as an argument to the event handler of an add-in that implements
      * {@link https://learn.microsoft.com/office/dev/add-ins/develop/event-based-activation | event-based activation}, including
-     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/onmessagesend-onappointmentsend-events | Smart Alerts},
-     * or the {@link https://learn.microsoft.com/office/dev/add-ins/outlook/spam-reporting | integrated spam-reporting feature}.
+     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/onmessagesend-onappointmentsend-events | Smart Alerts}, the
+     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/spam-reporting | integrated spam-reporting feature}, or
+     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/encryption-decryption | decryption}.
      * It allows the add-in to signify to the Outlook client that it has completed processing an event.
      *
      * @remarks
@@ -18993,6 +19279,8 @@ declare namespace Office {
      *
      * - Support for the integrated spam-reporting feature was introduced in Mailbox 1.14.
      *
+     * - Support for the decryption feature was introduced in Mailbox 1.16.
+     *
      * - For information about the Event object used by the {@link https://learn.microsoft.com/office/dev/add-ins/design/add-in-commands | function command button},
      * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-on-send-addins | on-send add-in},
      * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/online-meeting | online-meeting provider add-in}, and
@@ -19001,7 +19289,7 @@ declare namespace Office {
      */
     interface MailboxEvent {
         /**
-         * Indicates that the event-based or spam-reporting add-in has completed processing an event.
+         * Indicates that the event-based, spam-reporting, or decryption add-in has completed processing an event.
          *
          * @remarks
          * [Api set: Mailbox 1.10]
@@ -19016,9 +19304,11 @@ declare namespace Office {
          *
          * - Support to assign a `SmartAlertsEventCompletedOptions` object to the `options` parameter was introduced in Mailbox 1.12.
          *
-         * @param options - Optional. An object that specifies the behavior of an event-based or spam-reporting add-in when it completes processing an event.
+         * - Support for the decryption feature was introduced in Mailbox 1.16.
+         *
+         * @param options - Optional. An object that specifies the behavior of an event-based, spam-reporting, or decryption add-in when it completes processing an event.
          */
-        completed(options?: SmartAlertsEventCompletedOptions | SpamReportingEventCompletedOptions): void;
+        completed(options?: SmartAlertsEventCompletedOptions | SpamReportingEventCompletedOptions | MessageDecryptEventCompletedOptions): void;
     }
     /**
      * Represents the categories master list on the mailbox.
@@ -19453,7 +19743,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          */
         sensitivityLabel: SensitivityLabel;
         /**
@@ -19482,7 +19772,8 @@ declare namespace Office {
         /**
          * Manages the {@link Office.SessionData | SessionData} of an item in Compose mode.
          *
-         * **Important**: The entire SessionData object is limited to 50,000 characters per add-in.
+         * **Important**: In Outlook clients that support Mailbox 1.15 or earlier, the entire SessionData object for each mail item is limited to 50,000 characters per add-in.
+         * In clients that support Mailbox 1.16 or later, the character limit per add-in is 2,621,440 characters.
          *
          * @remarks
          * [Api set: Mailbox 1.11]
@@ -19673,7 +19964,7 @@ declare namespace Office {
          *
          * - `NumberOfAttachmentsExceeded`: The message or appointment has too many attachments.
          *
-         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 27,892,122 characters (about 25 MB).
+         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 34,865,152 characters. This corresponds to a maximum attachment size of 25 MB before Base64 encoding.
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -19729,7 +20020,7 @@ declare namespace Office {
          *
          * - `NumberOfAttachmentsExceeded`: The message or appointment has too many attachments.
          *
-         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 27,892,122 characters (about 25 MB).
+         * @param base64File - The Base64-encoded content of an image or file to be added to an email or event. The maximum length of the encoded string is 34,865,152 characters. This corresponds to a maximum attachment size of 25 MB before Base64 encoding.
          * @param attachmentName - The name of the attachment that is shown while the attachment is uploading. The maximum length is 255 characters.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of type `Office.AsyncResult`.
          *                 On success, the attachment identifier is provided in the `asyncResult.value` property. The identifier varies depending on the Outlook client.
@@ -20110,6 +20401,9 @@ declare namespace Office {
          * - In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
          * include a link to the file in the mail item. However, since only a link is included, `getAttachmentsAsync` doesn't return this attachment.
          *
+         * - For attachments of type `Office.MailboxEnums.AttachmentType.Item`, the size and serialized content returned by `getAttachmentsAsync` might differ between calls
+         * made from an `OnMessageSend` or `OnAppointmentSend` event handler. To reliably detect attachment changes, handle the `OnMessageAttachmentsChanged` or `OnAppointmentAttachmentsChanged` event instead.
+         *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of
@@ -20137,6 +20431,9 @@ declare namespace Office {
          *
          * - In Outlook on the web and the new Outlook on Windows, users can select the **Upload and share** option to upload an attachment to OneDrive and
          * include a link to the file in the mail item. However, since only a link is included, `getAttachmentsAsync` doesn't return this attachment.
+         *
+         * - For attachments of type `Office.MailboxEnums.AttachmentType.Item`, the size and serialized content returned by `getAttachmentsAsync` might differ between calls
+         * made from an `OnMessageSend` or `OnAppointmentSend` event handler. To reliably detect attachment changes, handle the `OnMessageAttachmentsChanged` or `OnAppointmentAttachmentsChanged` event instead.
          *
          * @param callback - Optional. When the method completes, the function passed in the `callback` parameter is called with a single parameter of
          *                 type `Office.AsyncResult`. If the call fails, the `asyncResult.error` property will contain an error code with the reason for
@@ -20660,7 +20957,7 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Compose
          *
-         * *Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
+         * **Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
          * To remove an inline attachment, first get the item's body, then remove any references of the attachment from its contents.
          * Use the {@link https://learn.microsoft.com/javascript/api/outlook/office.body | Office.Body} APIs to get and set the body of an item.
          *
@@ -20694,7 +20991,7 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Compose
          *
-         * *Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
+         * **Important**: The `removeAttachmentAsync` method doesn't remove inline attachments from a mail item.
          * To remove an inline attachment, first get the item's body, then remove any references of the attachment from its contents.
          * Use the {@link https://learn.microsoft.com/javascript/api/outlook/office.body | Office.Body} APIs to get and set the body of an item.
          *
@@ -20957,6 +21254,81 @@ declare namespace Office {
         setSelectedDataAsync(data: string, callback?: (asyncResult: Office.AsyncResult<void>) => void): void;
     }
     /**
+     * Specifies the behavior of an {@link https://learn.microsoft.com/office/dev/add-ins/outlook/encryption-decryption | encryption add-in} after it completes processing an
+     * {@link https://learn.microsoft.com/office/dev/add-ins/develop/event-based-activation#outlook-events | OnMessageDecrypt} event.
+     *
+     * @remarks
+     *
+     * [Api set: Mailbox 1.16]
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+     *
+     * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+     */
+    interface MessageDecryptEventCompletedOptions {
+        /**
+         * When you use the {@link https://learn.microsoft.com/javascript/api/outlook/office.mailboxevent#outlook-office-mailboxevent-completed-member(1) | completed method} to signal completion of an event handler,
+         * this value indicates if the `OnMessageDecrypt` event should continue to run or be canceled. If the `allowEvent` property is set to `true`, the decrypted contents of the message is displayed.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        allowEvent: boolean;
+        /**
+         * When you use the {@link https://learn.microsoft.com/javascript/api/outlook/office.mailboxevent#outlook-office-mailboxevent-completed-member(1) | completed method} to signal completion of an event handler
+         * and set its `allowEvent` property to `true`, this property sets the decrypted attachments of the message.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         */
+        attachments?: DecryptedMessageAttachment[];
+        /**
+         * When you use the {@link https://learn.microsoft.com/javascript/api/outlook/office.mailboxevent#outlook-office-mailboxevent-completed-member(1) | completed method} to signal completion of an event handler
+         * and set its `allowEvent` property to `true`, this property specifies any JSON data passed to the add-in for processing.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         *
+         * **Important**:
+         *
+         * - To retrieve the value of the `contextData` property, you must call `Office.context.mailbox.item.getInitializationContextAsync`.
+         * If you create a JSON string using `JSON.stringify()` and assign it to the `contextData` property, you must parse the string using `JSON.parse()` once you retrieve it.
+         *
+         * - You can use the `contextData` property to store custom internet headers to decrypt messages in reply and forward scenarios.
+         */
+        contextData?: any;
+        /**
+         * When you use the {@link https://learn.microsoft.com/javascript/api/outlook/office.mailboxevent#outlook-office-mailboxevent-completed-member(1) | completed method} to signal completion of an event handler
+         * and set its `allowEvent` property to `true`, this property sets the decrypted contents of the body of the message.
+         *
+         * @remarks
+         *
+         * [Api set: Mailbox 1.16]
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/understanding-outlook-add-in-permissions | Minimum permission level}**: **read/write item**
+         *
+         * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Message Read
+         *
+         * **Important**: If the `emailBody` property isn't specified, an empty body is returned.
+         */
+        emailBody?: DecryptedMessageBody;
+    }
+    /**
      * Represents the details of the form for composing a new message.
      *
      * @remarks
@@ -21199,11 +21571,13 @@ declare namespace Office {
          * The `cc` property returns an array that contains an {@link Office.EmailAddressDetails | EmailAddressDetails} object for
          * each recipient listed on the **Cc** line of the message. The maximum number of recipients returned varies per Outlook client.
          *
-         * - classic Windows: 500 recipients
+         * - Windows (classic - Mailbox 1.15 and earlier): 500 recipients
+         *
+         * - Windows (classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, classic Mac UI, iOS: 100 recipients
          *
-         * - Web browser, new Outlook: 20 recipients (collapsed view), 500 recipients (expanded view)
+         * - Web browser, Windows (new): 20 recipients (collapsed view), 1,000 recipients (expanded view)
          *
          * - New Mac UI: No limit
          *
@@ -21528,11 +21902,13 @@ declare namespace Office {
          * The `to` property returns an array that contains an {@link Office.EmailAddressDetails | EmailAddressDetails} object for
          * each recipient listed on the **To** line of the message. The maximum number of recipients returned varies per Outlook client.
          *
-         * - classic Windows: 500 recipients
+         * - Windows (classic - Mailbox 1.15 and earlier): 500 recipients
+         *
+         * - Windows (classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, classic Mac UI, iOS: 100 recipients
          *
-         * - Web browser, new Outlook: 20 recipients (collapsed view), 500 recipients (expanded view)
+         * - Web browser, Windows (new): 20 recipients (collapsed view), 1,000 recipients (expanded view)
          *
          * - New Mac UI: No limit
          *
@@ -22732,12 +23108,14 @@ declare namespace Office {
          *
          * **Important**:
          *
-         * With the `addAsync` method, you can add a maximum of 100 recipients to a mail item in Outlook on the web, on Windows
+         * With the `addAsync` method, you can add a maximum of 100 recipients to a mail item at a time in Outlook on the web, on Windows
          * ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), on Mac (classic UI), on Android, and on iOS.
          * However, take note of the following:
          *
-         * - In Outlook on the web, on Windows (new and classic), and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
-         * If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly, but be mindful of the recipient limit of the field.
+         * - In classic Outlook on Windows (Mailbox 1.15 and earlier) and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
+         * In classic Outlook on Windows, clients that support Mailbox 1.16 and later can have a maximum of 1,000 recipients. Target fields in Outlook on the web and the
+         * new Outlook on Windows have no recipient limits. If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly,
+         * but be mindful of the recipient limit of the field.
          *
          * - In Outlook on Android and on iOS, the `addAsync` method is supported starting in Version 4.2530.0. On these mobile clients, the `addAsync` method isn't
          * supported when a user replies from the the reply field at the bottom of a message.
@@ -22746,6 +23124,14 @@ declare namespace Office {
          *
          * The `addAsync` method isn't supported on a message that's currently loaded using the `loadItemByIdAsync` method.
          * For more information, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/item-multi-select | Activate your Outlook add-in on multiple messages}.
+         *
+         * All Outlook clients use regular expression rules to resolve email addresses in recipient fields.
+         *
+         * In Outlook on the web and the new Outlook on Windows, `addAsync` and `setAsync` add both resolved and unresolved email addresses to recipient fields.
+         * However, unresolved email addresses prevent an item from being sent until they are resolved or successfully validated.
+         * If unresolved recipients are added by a Smart Alerts add-in to any recipient field, the send operation is blocked and an error notification is displayed.
+         * The error notification identifies the add-in that added the unresolved recipients and lists the affected email addresses.
+         * If a Smart Alerts dialog is shown after selecting **Send**, the error notification is displayed after the dialog is dismissed (by selecting **Send Anyway** or **Don't Send**, or by closing the dialog).
          *
          * **Errors**:
          *
@@ -22771,12 +23157,14 @@ declare namespace Office {
          *
          * **Important**:
          *
-         * With the `addAsync` method, you can add a maximum of 100 recipients to a mail item in Outlook on the web, on Windows
+         * With the `addAsync` method, you can add a maximum of 100 recipients to a mail item at a time in Outlook on the web, on Windows
          * ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), on Mac (classic UI), on Android, and on iOS.
          * However, take note of the following:
          *
-         * - In Outlook on the web, on Windows (new and classic), and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
-         * If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly, but be mindful of the recipient limit of the field.
+         * - In classic Outlook on Windows (Mailbox 1.15 and earlier) and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
+         * In classic Outlook on Windows, clients that support Mailbox 1.16 and later can have a maximum of 1,000 recipients. Target fields in Outlook on the web and the
+         * new Outlook on Windows have no recipient limits. If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly,
+         * but be mindful of the recipient limit of the field.
          *
          * - In Outlook on Android and on iOS, the `addAsync` method is supported starting in Version 4.2530.0. On these mobile clients, the `addAsync` method isn't
          * supported when a user replies from the the reply field at the bottom of a message.
@@ -22785,6 +23173,14 @@ declare namespace Office {
          *
          * The `addAsync` method isn't supported on a message that's currently loaded using the `loadItemByIdAsync` method.
          * For more information, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/item-multi-select | Activate your Outlook add-in on multiple messages}.
+         *
+         * All Outlook clients use regular expression rules to resolve email addresses in recipient fields.
+         *
+         * In Outlook on the web and the new Outlook on Windows, `addAsync` and `setAsync` add both resolved and unresolved email addresses to recipient fields.
+         * However, unresolved email addresses prevent an item from being sent until they are resolved or successfully validated.
+         * If unresolved recipients are added by a Smart Alerts add-in to any recipient field, the send operation is blocked and an error notification is displayed.
+         * The error notification identifies the add-in that added the unresolved recipients and lists the affected email addresses.
+         * If a Smart Alerts dialog is shown after selecting **Send**, the error notification is displayed after the dialog is dismissed (by selecting **Send Anyway** or **Don't Send**, or by closing the dialog).
          *
          * **Errors**:
          *
@@ -22810,7 +23206,9 @@ declare namespace Office {
          *
          * The maximum number of recipients returned by this method varies per Outlook client.
          *
-         * - Windows ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), web browser, Mac (classic UI): 500 recipients
+         * - Windows (classic - Mailbox 1.15 and earlier), Mac (classic UI): 500 recipients
+         *
+         * - Web, Windows ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new}, classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, iOS: 100 recipients
          *
@@ -22864,7 +23262,9 @@ declare namespace Office {
          *
          * The maximum number of recipients returned by this method varies per Outlook client.
          *
-         * - Windows ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), web browser, Mac (classic UI): 500 recipients
+         * - Windows (classic - Mailbox 1.15 and earlier), Mac (classic UI): 500 recipients
+         *
+         * - Web, Windows ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new}, classic - Mailbox 1.16 and later): 1,000 recipients
          *
          * - Android, iOS: 100 recipients
          *
@@ -22913,12 +23313,14 @@ declare namespace Office {
          *
          * **Important**:
          *
-         * With the `setAsync` method, you can set a maximum of 100 recipients in Outlook on the web, on Windows
+         * With the `setAsync` method, you can set a maximum of 100 recipients at a time in Outlook on the web, on Windows
          * ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), on Mac (classic UI), on Android, and on iOS.
          * However, take note of the following:
          *
-         * - In Outlook on the web, on Windows (new and classic), and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
-         * If you need to add more recipients after setting 100 recipients, you can call `addAsync` repeatedly, but be mindful of the recipient limit of the field.
+         * - In classic Outlook on Windows (Mailbox 1.15 and earlier) and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
+         * In classic Outlook on Windows, clients that support Mailbox 1.16 and later can have a maximum of 1,000 recipients. Target fields in Outlook on the web and the
+         * new Outlook on Windows have no recipient limits. If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly,
+         * but be mindful of the recipient limit of the field.
          *
          * - In Outlook on Android and on iOS, the `setAsync` method is supported starting in Version 4.2530.0. On these mobile clients, the `setAsync` method isn't
          * supported when a user replies from the the reply field at the bottom of a message.
@@ -22927,6 +23329,14 @@ declare namespace Office {
          *
          * The `setAsync` method isn't supported on a message that's currently loaded using the `loadItemByIdAsync` method.
          * For more information, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/item-multi-select | Activate your Outlook add-in on multiple messages}.
+         *
+         * All Outlook clients use regular expression rules to resolve email addresses in recipient fields.
+         *
+         * In Outlook on the web and the new Outlook on Windows, `addAsync` and `setAsync` add both resolved and unresolved email addresses to recipient fields.
+         * However, unresolved email addresses prevent an item from being sent until they are resolved or successfully validated.
+         * If unresolved recipients are added by a Smart Alerts add-in to any recipient field, the send operation is blocked and an error notification is displayed.
+         * The error notification identifies the add-in that added the unresolved recipients and lists the affected email addresses.
+         * If a Smart Alerts dialog is shown after selecting **Send**, the error notification is displayed after the dialog is dismissed (by selecting **Send Anyway** or **Don't Send**, or by closing the dialog).
          *
          * **Errors**:
          *
@@ -22955,12 +23365,14 @@ declare namespace Office {
          *
          * **Important**:
          *
-         * With the `setAsync` method, you can set a maximum of 100 recipients in Outlook on the web, on Windows
+         * With the `setAsync` method, you can set a maximum of 100 recipients at a time in Outlook on the web, on Windows
          * ({@link https://support.microsoft.com/office/656bb8d9-5a60-49b2-a98b-ba7822bc7627 | new} and classic), on Mac (classic UI), on Android, and on iOS.
          * However, take note of the following:
          *
-         * - In Outlook on the web, on Windows (new and classic), and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
-         * If you need to add more recipients after setting 100 recipients, you can call `addAsync` repeatedly, but be mindful of the recipient limit of the field.
+         * - In classic Outlook on Windows (Mailbox 1.15 and earlier) and on Mac (classic UI), you can have a maximum of 500 recipients in a target field.
+         * In classic Outlook on Windows, clients that support Mailbox 1.16 and later can have a maximum of 1,000 recipients. Target fields in Outlook on the web and the
+         * new Outlook on Windows have no recipient limits. If you need to add more than 100 recipients to a mail item, you can call `addAsync` repeatedly,
+         * but be mindful of the recipient limit of the field.
          *
          * - In Outlook on Android and on iOS, the `setAsync` method is supported starting in Version 4.2530.0. On these mobile clients, the `setAsync` method isn't
          * supported when a user replies from the the reply field at the bottom of a message.
@@ -22969,6 +23381,14 @@ declare namespace Office {
          *
          * The `setAsync` method isn't supported on a message that's currently loaded using the `loadItemByIdAsync` method.
          * For more information, see {@link https://learn.microsoft.com/office/dev/add-ins/outlook/item-multi-select | Activate your Outlook add-in on multiple messages}.
+         *
+         * All Outlook clients use regular expression rules to resolve email addresses in recipient fields.
+         *
+         * In Outlook on the web and the new Outlook on Windows, `addAsync` and `setAsync` add both resolved and unresolved email addresses to recipient fields.
+         * However, unresolved email addresses prevent an item from being sent until they are resolved or successfully validated.
+         * If unresolved recipients are added by a Smart Alerts add-in to any recipient field, the send operation is blocked and an error notification is displayed.
+         * The error notification identifies the add-in that added the unresolved recipients and lists the affected email addresses.
+         * If a Smart Alerts dialog is shown after selecting **Send**, the error notification is displayed after the dialog is dismissed (by selecting **Send Anyway** or **Don't Send**, or by closing the dialog).
          *
          * **Errors**:
          *
@@ -23789,7 +24209,7 @@ declare namespace Office {
      * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
      *
      * To learn more about how to manage sensitivity labels in your add-in, see
-     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+     * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
      */
     interface SensitivityLabel {
         /**
@@ -23805,7 +24225,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -23827,7 +24247,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          *
          * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter, `asyncResult`,
          *                 which is an `Office.AsyncResult` object. The sensitivity label's GUID is returned in the
@@ -23854,7 +24274,7 @@ declare namespace Office {
          * **Tip**: To determine the sensitivity labels available for use, call the `Office.context.sensitivityLabelsCatalog.getAsync` method.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          * 
          * @param sensitivityLabel - The sensitivity label to be applied to the message or appointment being composed. The parameter value can be a sensitivity label's
          *                         unique identifier (GUID) or a {@link Office.SensitivityLabelDetails | SensitivityLabelDetails} object.
@@ -23884,7 +24304,7 @@ declare namespace Office {
          * **Tip**: To determine the sensitivity labels available for use, call the `Office.context.sensitivityLabelsCatalog.getAsync` method.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          * 
          * @param sensitivityLabel - The sensitivity label to be applied to the message or appointment being composed. The parameter value can be a sensitivity label's
          *                         unique identifier (GUID) or a {@link Office.SensitivityLabelDetails | SensitivityLabelDetails} object.
@@ -23903,7 +24323,7 @@ declare namespace Office {
      * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
      *
      * To learn more about how to manage sensitivity labels in your add-in, see
-     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+     * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
      */
     export interface SensitivityLabelChangedEventArgs {
         /**
@@ -23927,7 +24347,7 @@ declare namespace Office {
      * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
      *
      * To learn more about how to manage sensitivity labels in your add-in, see
-     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+     * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
      */
     interface SensitivityLabelDetails {
         /**
@@ -23966,7 +24386,7 @@ declare namespace Office {
      * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
      *
      * To learn more about how to manage sensitivity labels in your add-in, see
-     * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+     * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
      */
     export interface SensitivityLabelsCatalog {
         /**
@@ -23984,7 +24404,7 @@ declare namespace Office {
          * **Recommended**: To determine whether the catalog of sensitivity labels is enabled in Outlook, call `getIsEnabledAsync` before using `getAsync`.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -24008,7 +24428,7 @@ declare namespace Office {
          * **Recommended**: To determine whether the catalog of sensitivity labels is enabled in Outlook, call `getIsEnabledAsync` before using `getAsync`.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          * 
          * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter, `asyncResult`,
          *                 which is an `Office.AsyncResult` object. The available sensitivity labels and their properties are returned in the
@@ -24031,7 +24451,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          *
          * @param options - An object literal that contains one or more of the following properties:-
          *        `asyncContext`: Developers can provide any object they wish to access in the callback function.
@@ -24055,7 +24475,7 @@ declare namespace Office {
          * **Important**: To use the sensitivity label feature in your add-in, you must have a Microsoft 365 E5 subscription.
          *
          * To learn more about how to manage sensitivity labels in your add-in, see
-         * {@link https://learn.microsoft.com/office/dev/add-ins/outlook/sensitivity-label | Manage the sensitivity label of your message or appointment in compose mode}.
+         * {@link https://learn.microsoft.com/office/dev/add-ins/develop/sensitivity-label | Manage sensitivity labels in Office Add-ins}.
          *
          * @param callback - When the method completes, the function passed in the `callback` parameter is called with a single parameter, `asyncResult`,
          *                 which is an `Office.AsyncResult` object. The status of the catalog of sensitivity labels is returned in the `asyncResult.value` property.
@@ -24247,7 +24667,8 @@ declare namespace Office {
      *
      * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose
      *
-     * **Important**: For each mail item, the entire SessionData object is limited to 50,000 characters per add-in.
+     * **Important**: In Outlook clients that support Mailbox 1.15 or earlier, the entire SessionData object for each mail item is limited to 50,000 characters per add-in.
+     * In clients that support Mailbox 1.16 or later, the character limit per add-in is 2,621,440 characters.
      */
     interface SessionData {
         /**
@@ -24351,7 +24772,8 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose
          *
-         * **Important**: For each mail item, the entire SessionData object is limited to 50,000 characters per add-in.
+         * **Important**: In Outlook clients that support Mailbox 1.15 or earlier, the entire SessionData object for each mail item is limited to 50,000 characters per add-in.
+         * In clients that support Mailbox 1.16 or later, the character limit per add-in is 2,621,440 characters.
          *
          * @param name - The session data key.
          * @param value - The session data value as a string.
@@ -24371,7 +24793,8 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose
          *
-         * **Important**: For each mail item, the entire SessionData object is limited to 50,000 characters per add-in.
+         * **Important**: In Outlook clients that support Mailbox 1.15 or earlier, the entire SessionData object for each mail item is limited to 50,000 characters per add-in.
+         * In clients that support Mailbox 1.16 or later, the character limit per add-in is 2,621,440 characters.
          *
          * @param name - The session data key.
          * @param value - The session data value as a string.
@@ -24571,7 +24994,11 @@ declare namespace Office {
          *
          * **{@link https://learn.microsoft.com/office/dev/add-ins/outlook/outlook-add-ins-overview#extension-points | Applicable Outlook mode}**: Compose
          *
-         * **Important**: The error message must be 500 characters or less.
+         * **Important**:
+         *
+         * - The error message must be 500 characters or less.
+         *
+         * - If you don't specify a message in the `errorMessage` property, the following default message is shown instead: "\<Add-in name\> is preventing this email from being sent."
          */
         errorMessage?: string;
         /**
@@ -25270,7 +25697,7 @@ declare namespace OfficeExtension {
         top?: number;
         /**
          * Only usable on collection types. Specifies the number of items in the collection that are to be skipped and not included in the result.
-         * If top is specified, the result set will start after skipping the specified number of items.
+         * If `top` is specified, the result set will start after skipping the specified number of items.
          */
         skip?: number;
     }
@@ -25522,15 +25949,17 @@ declare namespace OfficeExtension {
          */
         add(objects: ClientObject[]): void;
         /**
-         * Release the memory associated with an object that was previously added to this collection.
-         * Having many tracked objects slows down the Office application, so please remember to free any objects you add, once you're done using them.
-         * You will need to call `context.sync()` before the memory release takes effect.
+         * If the given proxy object is already in this collection, this method releases the memory associated with the object.
+         * You need to call `context.sync()` before the memory release takes effect.
+         * If the given proxy object isn't in this collection, the proxy object won't be stored after `context.sync()` is called.
+         * This speeds up instances where many objects are created for single-use operations.
          */
         remove(object: ClientObject): void;
         /**
-         * Release the memory associated with an object that was previously added to this collection.
-         * Having many tracked objects slows down the Office application, so please remember to free any objects you add, once you're done using them.
-         * You will need to call `context.sync()` before the memory release takes effect.
+         * If the given proxy objects are already in this collection, this method releases the memory associated with the objects.
+         * You need to call `context.sync()` before the memory release takes effect.
+         * If the given proxy objects aren't in this collection, the proxy objects won't be stored after `context.sync()` is called.
+         * This speeds up instances where many objects are created for single-use operations.
          */
         remove(objects: ClientObject[]): void;
     }
@@ -57284,6 +57713,49 @@ declare namespace Excel {
         toJSON(): Excel.Interfaces.SlicerItemCollectionData;
     }
     /**
+     * Provides information about the `LinkedEntityCellValue` that was requested given a specified `LinkedEntityId`.
+     *
+     * @remarks
+     * [Api set: ExcelApi 1.21]
+     */
+    interface LinkedEntityCellValueLoadedEventArgs {
+        /**
+         * Any error encountered during the request to load the `LinkedEntityCellValue`.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         */
+        error?: string;
+        /**
+         * Gets the `LinkedEntityId` of the requested `LinkedEntityCellValue`.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         */
+        id: LinkedEntityId;
+        /**
+         * Gets the `LinkedEntityCellValue` of the requested `LinkedEntityId`. If the load operation failed, this property is `null`.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         */
+        linkedEntityCellValue?: LinkedEntityCellValue;
+        /**
+         * Gets the source of the event. See `Excel.EventSource` for details.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         */
+        source: Excel.EventSource | "Local" | "Remote";
+        /**
+         * Gets the type of the event. See `Excel.EventType` for details.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         */
+        type: "LinkedEntityDataDomainLinkedEntityCellValueLoaded";
+    }
+    /**
      * Represents a specific category or field of information that shares some common characteristics or attributes.
                 A data domain is linked to a data provider, that acts as the data source for `LinkedEntityCellValue` objects in the workbook.
                 A data domain is a category of data, such as stocks, geography, or currencies. A data provider is a service, such as Bing, Power BI, or an Office Add-in.
@@ -57566,6 +58038,16 @@ declare namespace Excel {
          */
         getItemOrNullObject(id: string): Excel.LinkedEntityDataDomain;
         /**
+         * Submits a request to load the `LinkedEntityCellValue` object with the specified `LinkedEntityId`.
+                    If found, the `LinkedEntityCellValue` object will be returned through the `LinkedEntityCellValueLoaded` event.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         *
+         * @param id A specific `LinkedEntityId`
+         */
+        loadLinkedEntityCellValue(id: LinkedEntityId): void;
+        /**
          * Refreshes all `LinkedEntityCellValue` objects of all linked entity data domains in this collection.
                     The refresh request can fail if the data providers are busy or temporarily inaccessible.
          *
@@ -57591,6 +58073,17 @@ declare namespace Excel {
          * @param propertyNamesAndPaths `propertyNamesAndPaths.select` is a comma-delimited string that specifies the properties to load, and `propertyNamesAndPaths.expand` is a comma-delimited string that specifies the navigation properties to load.
          */
         load(propertyNamesAndPaths?: OfficeExtension.LoadOption): Excel.LinkedEntityDataDomainCollection;
+        /**
+         * Occurs when the request to load a `LinkedEntityCellValue` is completed.
+         *
+         * @remarks
+         * [Api set: ExcelApi 1.21]
+         * 
+         * This event isn't supported in Excel on the web.
+         *
+         * @eventproperty
+         */
+        readonly onLinkedEntityCellValueLoaded: OfficeExtension.EventHandlers<Excel.LinkedEntityCellValueLoadedEventArgs>;
         /**
          * Occurs when a new linked entity data domain is added to the workbook.
          *
@@ -66845,7 +67338,7 @@ declare namespace Excel {
          *
          * @param dateText Is text that represents a date in a Microsoft Excel date format, between 1/1/1900 or 1/1/1904 (depending on the workbook's date system) and 12/31/9999.
          */
-        datevalue(dateText: string | number | Excel.Range | Excel.RangeReference | Excel.FunctionResult<any>): FunctionResult<number>;
+        datevalue(dateText: string | Excel.Range | Excel.RangeReference | Excel.FunctionResult<any>): FunctionResult<number>;
         /**
          * Returns the day of the month, a number from 1 to 31.
          *
@@ -69667,7 +70160,7 @@ declare namespace Excel {
             */
             $top?: number;
             /**
-            * Specify the number of items in the collection that are to be skipped and not included in the result. If top is specified, the selection of result will start after skipping the specified number of items.
+            * Specify the number of items in the collection that are to be skipped and not included in the result. If `top` is specified, the selection of result will start after skipping the specified number of items.
             */
             $skip?: number;
         }
@@ -95386,6 +95879,8 @@ declare namespace Word {
      *
      * @remarks
      * [Api set: WordApi 1.8]
+     *
+     * Word critique annotation cards display a maximum of three suggestions. If more than three suggestions are provided, the rest aren't displayed in the pop-up menu.
      */
     interface CritiquePopupOptions {
         /**
@@ -96169,12 +96664,14 @@ declare namespace Word {
          */
         insertContentControl(contentControlType?: Word.ContentControlType.richText | Word.ContentControlType.plainText | Word.ContentControlType.checkBox | Word.ContentControlType.dropDownList | Word.ContentControlType.comboBox | Word.ContentControlType.buildingBlockGallery | Word.ContentControlType.datePicker | Word.ContentControlType.repeatingSection | Word.ContentControlType.picture | Word.ContentControlType.group | "RichText" | "PlainText" | "CheckBox" | "DropDownList" | "ComboBox" | "BuildingBlockGallery" | "DatePicker" | "RepeatingSection" | "Picture" | "Group"): Word.ContentControl;
         /**
-         * Inserts a document into the body at the specified location.
+         * Inserts a document into the body at the specified location. The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.1]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, or `end`.
@@ -97393,6 +97890,8 @@ declare namespace Word {
      *
      * @remarks
      * [Api set: WordApiDesktop 1.4]
+     *
+     * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
      */
     class CoauthoringLock extends OfficeExtension.ClientObject {
         /** The request context associated with the object. This connects the add-in's process to the Office host application's process. */
@@ -97431,6 +97930,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         unlock(): void;
         /**
@@ -97473,6 +97974,8 @@ declare namespace Word {
      *
      * @remarks
      * [Api set: WordApiDesktop 1.4]
+     *
+     * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
      */
     class CoauthoringLockCollection extends OfficeExtension.ClientObject {
         /** The request context associated with the object. This connects the add-in's process to the Office host application's process. */
@@ -97485,6 +97988,8 @@ declare namespace Word {
          * @remarks
          * [Api set: WordApiDesktop 1.4]
          *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
+         *
          * @param options Optional. The options to further configure the coauthoring lock.
          */
         add(options?: Word.CoauthoringLockAddOptions): Word.CoauthoringLock;
@@ -97493,6 +97998,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         unlockEphemeralLocks(): void;
         /**
@@ -97532,6 +98039,8 @@ declare namespace Word {
      *
      * @remarks
      * [Api set: WordApiDesktop 1.4]
+     *
+     * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
      */
     interface CoauthoringLockAddOptions {
         /**
@@ -97563,6 +98072,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         readonly locks: Word.CoauthoringLockCollection;
         /**
@@ -97699,6 +98210,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         readonly locks: Word.CoauthoringLockCollection;
         /**
@@ -99557,7 +100070,7 @@ declare namespace Word {
          */
         color: string;
         /**
-         * Gets an integer that represents the content control identifier.
+         * Gets an integer that represents the content control identifier. This number is unique for each content control and doesn't change.
          *
          * @remarks
          * [Api set: WordApi 1.1]
@@ -99599,7 +100112,7 @@ declare namespace Word {
          */
         readonly subtype: Word.ContentControlType | "Unknown" | "RichTextInline" | "RichTextParagraphs" | "RichTextTableCell" | "RichTextTableRow" | "RichTextTable" | "PlainTextInline" | "PlainTextParagraph" | "Picture" | "BuildingBlockGallery" | "CheckBox" | "ComboBox" | "DropDownList" | "DatePicker" | "RepeatingSection" | "RichText" | "PlainText" | "Group";
         /**
-         * Specifies a tag to identify a content control.
+         * Specifies a tag to identify a content control. The tag is different from the title in that it isn't displayed to the user. The tag can be used to identify a content control programmatically.
          *
          * @remarks
          * [Api set: WordApi 1.1]
@@ -99739,12 +100252,14 @@ declare namespace Word {
          */
         insertBreak(breakType: Word.BreakType | "Page" | "Next" | "SectionNext" | "SectionContinuous" | "SectionEven" | "SectionOdd" | "Line", insertLocation: Word.InsertLocation.start | Word.InsertLocation.end | Word.InsertLocation.before | Word.InsertLocation.after | "Start" | "End" | "Before" | "After"): void;
         /**
-         * Inserts a document into the content control at the specified location.
+         * Inserts a document into the content control at the specified location. The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.1]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, or `end`. `replace` cannot be used with `richTextTable` and `richTextTableRow` content controls.
@@ -102083,22 +102598,22 @@ declare namespace Word {
          */
         closePrintPreview(): void;
         /**
-         * Displays revision marks that indicate where the specified document differs from another document.
+         * Displays revision marks that indicate where the current document differs from a specified document.
          *
          * @remarks
          * [Api set: WordApiDesktop 1.1]
          *
-         * @param filePath The path of the document with which the specified document is compared.
-         * @param documentCompareOptions Optional. The additional options that specifies the behavior of comparing document.
+         * @param filePath The path of the document with which the current document is compared.
+         * @param documentCompareOptions Optional. The additional options that specify the behavior when comparing the documents.
          */
         compare(filePath: string, documentCompareOptions?: Word.DocumentCompareOptions): void;
         /**
-         * Displays revision marks that indicate where the specified document differs from another document.
+         * Displays revision marks that indicate where the current document differs from a specified document.
          *
          * @remarks
          * [Api set: WordApiDesktop 1.2]
          *
-         * @param base64File The Base64-encoded content of the document with which the specified document is compared.
+         * @param base64File The Base64-encoded content of the document with which the current document is compared.
          * @param documentCompareOptions Optional. The additional options that specify the behavior for comparing the documents. Note that the `compareTarget` option isn't allowed to be `compareTargetSelected` in this API.
          */
         compareFromBase64(base64File: string, documentCompareOptions?: Word.DocumentCompareOptions): void;
@@ -102325,11 +102840,14 @@ declare namespace Word {
         /**
          * Inserts a document into the target document at a specific location with additional properties.
                     Headers, footers, watermarks, and other section properties are copied by default.
+                    The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.5]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, or `end`.
@@ -102992,11 +103510,14 @@ declare namespace Word {
         /**
          * Inserts a document into the target document at a specific location with additional properties.
                     Headers, footers, watermarks, and other section properties are copied by default.
+                    The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApiHiddenDocument 1.5]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, or `end`.
@@ -104698,12 +105219,14 @@ declare namespace Word {
          */
         insertContentControl(): Word.ContentControl;
         /**
-         * Inserts a document at the specified location.
+         * Inserts a document at the specified location. The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.2]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `before` or `after`.
@@ -107005,6 +107528,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApi 1.6]
+         *
+         * This API requires an active Microsoft 365 subscription. It doesn't work with single-purchase licenses.
          */
         readonly uniqueLocalId: string;
         /**
@@ -107250,12 +107775,14 @@ declare namespace Word {
          */
         insertContentControl(contentControlType?: Word.ContentControlType.richText | Word.ContentControlType.plainText | Word.ContentControlType.checkBox | Word.ContentControlType.dropDownList | Word.ContentControlType.comboBox | Word.ContentControlType.buildingBlockGallery | Word.ContentControlType.datePicker | Word.ContentControlType.repeatingSection | Word.ContentControlType.picture | Word.ContentControlType.group | "RichText" | "PlainText" | "CheckBox" | "DropDownList" | "ComboBox" | "BuildingBlockGallery" | "DatePicker" | "RepeatingSection" | "Picture" | "Group"): Word.ContentControl;
         /**
-         * Inserts a document into the paragraph at the specified location.
+         * Inserts a document into the paragraph at the specified location. The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.1]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, or `end`.
@@ -107364,7 +107891,7 @@ declare namespace Word {
          */
         insertTextBox(text?: string, insertShapeOptions?: Word.InsertShapeOptions): Word.Shape;
         /**
-         * Joins a list paragraph with the closest list above or below this paragraph.
+         * Joins a list paragraph with the closest list above or below this paragraph. This method only works with bulleted lists, not numbered lists.
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
@@ -108669,12 +109196,14 @@ declare namespace Word {
          */
         insertField(insertLocation: Word.InsertLocation | "Replace" | "Start" | "End" | "Before" | "After", fieldType?: "Addin" | "AddressBlock" | "Advance" | "Ask" | "Author" | "AutoText" | "AutoTextList" | "BarCode" | "Bibliography" | "BidiOutline" | "Citation" | "Comments" | "Compare" | "CreateDate" | "Data" | "Database" | "Date" | "DisplayBarcode" | "DocProperty" | "DocVariable" | "EditTime" | "Embedded" | "EQ" | "Expression" | "FileName" | "FileSize" | "FillIn" | "FormCheckbox" | "FormDropdown" | "FormText" | "GotoButton" | "GreetingLine" | "Hyperlink" | "If" | "Import" | "Include" | "IncludePicture" | "IncludeText" | "Index" | "Info" | "Keywords" | "LastSavedBy" | "Link" | "ListNum" | "MacroButton" | "MergeBarcode" | "MergeField" | "MergeRec" | "MergeSeq" | "Next" | "NextIf" | "NoteRef" | "NumChars" | "NumPages" | "NumWords" | "OCX" | "Page" | "PageRef" | "Print" | "PrintDate" | "Private" | "Quote" | "RD" | "Ref" | "RevNum" | "SaveDate" | "Section" | "SectionPages" | "Seq" | "Set" | "Shape" | "SkipIf" | "StyleRef" | "Subject" | "Subscriber" | "Symbol" | "TA" | "TC" | "Template" | "Time" | "Title" | "TOA" | "TOC" | "UserAddress" | "UserInitials" | "UserName" | "XE" | "Empty" | "Others" | "Undefined", text?: string, removeFormatting?: boolean): Word.Field;
         /**
-         * Inserts a document at the specified location.
+         * Inserts a document at the specified location. The maximum size of the document being inserted is 4 MB.
          *
          * @remarks
          * [Api set: WordApi 1.1]
          *
          * Insertion isn't supported if the document being inserted contains an ActiveX control (likely in a form field). Consider replacing such a form field with a content control or other option appropriate for your scenario.
+         *
+         * Document settings aren't preserved when inserting a document.
          *
          * @param base64File The Base64-encoded content of a .docx file.
          * @param insertLocation The value must be `replace`, `start`, `end`, `before`, or `after`.
@@ -139692,6 +140221,15 @@ declare namespace Word {
         /** Gets the loaded child items in this collection. */
         readonly items: Word.ListTemplate[];
         /**
+         * Adds a new `ListTemplate` object. Note: This operation isn't allowed if the collection represents list templates from a {@link Word.ListTemplateGallery}.
+         *
+         * @remarks
+         * [Api set: WordApiDesktop 1.5]
+         *
+         * @param options Optional. Options for adding a new list template.
+         */
+        add(options?: Word.ListTemplateAddOptions): Word.ListTemplate;
+        /**
          * Queues up a command to load the specified properties of the object. You must call `context.sync()` before reading the properties.
          *
          * @param options Provides options for which properties of the object to load.
@@ -139722,6 +140260,28 @@ declare namespace Word {
         * Whereas the original `Word.ListTemplateCollection` object is an API object, the `toJSON` method returns a plain JavaScript object (typed as `Word.Interfaces.ListTemplateCollectionData`) that contains an "items" array with shallow copies of any loaded properties from the collection's items.
         */
         toJSON(): Word.Interfaces.ListTemplateCollectionData;
+    }
+    /**
+     * Represents the options for the {@link Word.ListTemplateCollection | ListTemplateCollection.add} method.
+     *
+     * @remarks
+     * [Api set: WordApiDesktop 1.5]
+     */
+    interface ListTemplateAddOptions {
+        /**
+         * If provided, specifies the name of the list template to be added.
+         *
+         * @remarks
+         * [Api set: WordApiDesktop 1.5]
+         */
+        name?: string;
+        /**
+         * If provided, specifies whether to apply outline numbering to the new list template. The default value is `false`.
+         *
+         * @remarks
+         * [Api set: WordApiDesktop 1.5]
+         */
+        outlineNumbered?: boolean;
     }
     /**
      * Represents a gallery of list templates of the same {@link Word.ListTemplateGalleryType}.
@@ -139854,6 +140414,8 @@ declare namespace Word {
      *
      * @remarks
      * [Api set: WordApiDesktop 1.4]
+     *
+     * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
      */
     enum CoauthoringLockType {
         /**
@@ -140561,7 +141123,7 @@ declare namespace Word {
              */
             styleBuiltIn?: Word.BuiltInStyleName | "Other" | "Normal" | "Heading1" | "Heading2" | "Heading3" | "Heading4" | "Heading5" | "Heading6" | "Heading7" | "Heading8" | "Heading9" | "Toc1" | "Toc2" | "Toc3" | "Toc4" | "Toc5" | "Toc6" | "Toc7" | "Toc8" | "Toc9" | "FootnoteText" | "Header" | "Footer" | "Caption" | "FootnoteReference" | "EndnoteReference" | "EndnoteText" | "Title" | "Subtitle" | "Hyperlink" | "Strong" | "Emphasis" | "NoSpacing" | "ListParagraph" | "Quote" | "IntenseQuote" | "SubtleEmphasis" | "IntenseEmphasis" | "SubtleReference" | "IntenseReference" | "BookTitle" | "Bibliography" | "TocHeading" | "TableGrid" | "PlainTable1" | "PlainTable2" | "PlainTable3" | "PlainTable4" | "PlainTable5" | "TableGridLight" | "GridTable1Light" | "GridTable1Light_Accent1" | "GridTable1Light_Accent2" | "GridTable1Light_Accent3" | "GridTable1Light_Accent4" | "GridTable1Light_Accent5" | "GridTable1Light_Accent6" | "GridTable2" | "GridTable2_Accent1" | "GridTable2_Accent2" | "GridTable2_Accent3" | "GridTable2_Accent4" | "GridTable2_Accent5" | "GridTable2_Accent6" | "GridTable3" | "GridTable3_Accent1" | "GridTable3_Accent2" | "GridTable3_Accent3" | "GridTable3_Accent4" | "GridTable3_Accent5" | "GridTable3_Accent6" | "GridTable4" | "GridTable4_Accent1" | "GridTable4_Accent2" | "GridTable4_Accent3" | "GridTable4_Accent4" | "GridTable4_Accent5" | "GridTable4_Accent6" | "GridTable5Dark" | "GridTable5Dark_Accent1" | "GridTable5Dark_Accent2" | "GridTable5Dark_Accent3" | "GridTable5Dark_Accent4" | "GridTable5Dark_Accent5" | "GridTable5Dark_Accent6" | "GridTable6Colorful" | "GridTable6Colorful_Accent1" | "GridTable6Colorful_Accent2" | "GridTable6Colorful_Accent3" | "GridTable6Colorful_Accent4" | "GridTable6Colorful_Accent5" | "GridTable6Colorful_Accent6" | "GridTable7Colorful" | "GridTable7Colorful_Accent1" | "GridTable7Colorful_Accent2" | "GridTable7Colorful_Accent3" | "GridTable7Colorful_Accent4" | "GridTable7Colorful_Accent5" | "GridTable7Colorful_Accent6" | "ListTable1Light" | "ListTable1Light_Accent1" | "ListTable1Light_Accent2" | "ListTable1Light_Accent3" | "ListTable1Light_Accent4" | "ListTable1Light_Accent5" | "ListTable1Light_Accent6" | "ListTable2" | "ListTable2_Accent1" | "ListTable2_Accent2" | "ListTable2_Accent3" | "ListTable2_Accent4" | "ListTable2_Accent5" | "ListTable2_Accent6" | "ListTable3" | "ListTable3_Accent1" | "ListTable3_Accent2" | "ListTable3_Accent3" | "ListTable3_Accent4" | "ListTable3_Accent5" | "ListTable3_Accent6" | "ListTable4" | "ListTable4_Accent1" | "ListTable4_Accent2" | "ListTable4_Accent3" | "ListTable4_Accent4" | "ListTable4_Accent5" | "ListTable4_Accent6" | "ListTable5Dark" | "ListTable5Dark_Accent1" | "ListTable5Dark_Accent2" | "ListTable5Dark_Accent3" | "ListTable5Dark_Accent4" | "ListTable5Dark_Accent5" | "ListTable5Dark_Accent6" | "ListTable6Colorful" | "ListTable6Colorful_Accent1" | "ListTable6Colorful_Accent2" | "ListTable6Colorful_Accent3" | "ListTable6Colorful_Accent4" | "ListTable6Colorful_Accent5" | "ListTable6Colorful_Accent6" | "ListTable7Colorful" | "ListTable7Colorful_Accent1" | "ListTable7Colorful_Accent2" | "ListTable7Colorful_Accent3" | "ListTable7Colorful_Accent4" | "ListTable7Colorful_Accent5" | "ListTable7Colorful_Accent6";
             /**
-             * Specifies a tag to identify a content control.
+             * Specifies a tag to identify a content control. The tag is different from the title in that it isn't displayed to the user. The tag can be used to identify a content control programmatically.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -146293,6 +146855,8 @@ declare namespace Word {
             *
             * @remarks
             * [Api set: WordApiDesktop 1.4]
+            *
+            * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
             */
             locks?: Word.Interfaces.CoauthoringLockData[];
             /**
@@ -146349,6 +146913,8 @@ declare namespace Word {
             *
             * @remarks
             * [Api set: WordApiDesktop 1.4]
+            *
+            * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
             */
             locks?: Word.Interfaces.CoauthoringLockData[];
             /**
@@ -146940,7 +147506,7 @@ declare namespace Word {
              */
             color?: string;
             /**
-             * Gets an integer that represents the content control identifier.
+             * Gets an integer that represents the content control identifier. This number is unique for each content control and doesn't change.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -146982,7 +147548,7 @@ declare namespace Word {
              */
             subtype?: Word.ContentControlType | "Unknown" | "RichTextInline" | "RichTextParagraphs" | "RichTextTableCell" | "RichTextTableRow" | "RichTextTable" | "PlainTextInline" | "PlainTextParagraph" | "Picture" | "BuildingBlockGallery" | "CheckBox" | "ComboBox" | "DropDownList" | "DatePicker" | "RepeatingSection" | "RichText" | "PlainText" | "Group";
             /**
-             * Specifies a tag to identify a content control.
+             * Specifies a tag to identify a content control. The tag is different from the title in that it isn't displayed to the user. The tag can be used to identify a content control programmatically.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -149473,6 +150039,8 @@ declare namespace Word {
              *
              * @remarks
              * [Api set: WordApi 1.6]
+             *
+             * This API requires an active Microsoft 365 subscription. It doesn't work with single-purchase licenses.
              */
             uniqueLocalId?: string;
         }
@@ -155030,6 +155598,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         interface CoauthoringLockLoadOptions {
             /**
@@ -155063,6 +155633,8 @@ declare namespace Word {
          *
          * @remarks
          * [Api set: WordApiDesktop 1.4]
+         *
+         * This API works only with legacy coauthoring locks. It doesn't apply to modern OneDrive or SharePoint coauthoring, where lock management is handled automatically by the service. Calls on a modern document will fail with a `GeneralException` error.
          */
         interface CoauthoringLockCollectionLoadOptions {
             /**
@@ -156117,7 +156689,7 @@ declare namespace Word {
              */
             color?: boolean;
             /**
-             * Gets an integer that represents the content control identifier.
+             * Gets an integer that represents the content control identifier. This number is unique for each content control and doesn't change.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -156159,7 +156731,7 @@ declare namespace Word {
              */
             subtype?: boolean;
             /**
-             * Specifies a tag to identify a content control.
+             * Specifies a tag to identify a content control. The tag is different from the title in that it isn't displayed to the user. The tag can be used to identify a content control programmatically.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -156332,7 +156904,7 @@ declare namespace Word {
              */
             color?: boolean;
             /**
-             * For EACH ITEM in the collection: Gets an integer that represents the content control identifier.
+             * For EACH ITEM in the collection: Gets an integer that represents the content control identifier. This number is unique for each content control and doesn't change.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -156374,7 +156946,7 @@ declare namespace Word {
              */
             subtype?: boolean;
             /**
-             * For EACH ITEM in the collection: Specifies a tag to identify a content control.
+             * For EACH ITEM in the collection: Specifies a tag to identify a content control. The tag is different from the title in that it isn't displayed to the user. The tag can be used to identify a content control programmatically.
              *
              * @remarks
              * [Api set: WordApi 1.1]
@@ -160013,6 +160585,8 @@ declare namespace Word {
              *
              * @remarks
              * [Api set: WordApi 1.6]
+             *
+             * This API requires an active Microsoft 365 subscription. It doesn't work with single-purchase licenses.
              */
             uniqueLocalId?: boolean;
         }
@@ -160235,6 +160809,8 @@ declare namespace Word {
              *
              * @remarks
              * [Api set: WordApi 1.6]
+             *
+             * This API requires an active Microsoft 365 subscription. It doesn't work with single-purchase licenses.
              */
             uniqueLocalId?: boolean;
         }
@@ -172581,7 +173157,7 @@ declare namespace OneNote {
             */
             $top?: number;
             /**
-            * Specify the number of items in the collection that are to be skipped and not included in the result. If top is specified, the selection of result will start after skipping the specified number of items.
+            * Specify the number of items in the collection that are to be skipped and not included in the result. If `top` is specified, the selection of result will start after skipping the specified number of items.
             */
             $skip?: number;
         }
@@ -177494,7 +178070,7 @@ declare namespace Visio {
             */
             $top?: number;
             /**
-            * Specify the number of items in the collection that are to be skipped and not included in the result. If top is specified, the selection of result will start after skipping the specified number of items.
+            * Specify the number of items in the collection that are to be skipped and not included in the result. If `top` is specified, the selection of result will start after skipping the specified number of items.
             */
             $skip?: number;
         }
@@ -185439,12 +186015,14 @@ declare namespace PowerPoint {
     enum ThemeColor {
         /**
          * Specifies a mixed theme color.
+                    Not applicable as input to {@link PowerPoint.ThemeColorScheme | ThemeColorScheme.getThemeColor} nor {@link PowerPoint.ThemeColorScheme| ThemeColorScheme.setThemeColor}.
          * @remarks
          * [Api set: PowerPointApi 1.10]
          */
         mixed = "Mixed",
         /**
          * Specifies no theme color.
+                    Not applicable as input to {@link PowerPoint.ThemeColorScheme | ThemeColorScheme.getThemeColor} nor {@link PowerPoint.ThemeColorScheme| ThemeColorScheme.setThemeColor}.
          * @remarks
          * [Api set: PowerPointApi 1.10]
          */
@@ -185537,7 +186115,7 @@ declare namespace PowerPoint {
          * @remarks
          * [Api set: PowerPointApi 1.10]
          *
-         * @param color The theme color.
+         * @param color The theme color. The values `none` and `mixed` are invalid for this API.
          * @returns The color value in #RRGGBB format (e.g., "FFA500").
          */
         getThemeColor(color: PowerPoint.ThemeColor): OfficeExtension.ClientResult<string>;
@@ -185547,7 +186125,7 @@ declare namespace PowerPoint {
          * @remarks
          * [Api set: PowerPointApi 1.10]
          *
-         * @param color The theme color.
+         * @param color The theme color. The values `none` and `mixed` are invalid for this API.
          * @returns The color value in #RRGGBB format (e.g., "FFA500").
          */
         getThemeColor(color: "Mixed" | "None" | "Accent1" | "Accent2" | "Accent3" | "Accent4" | "Accent5" | "Accent6" | "Dark1" | "Dark2" | "FollowedHyperlink" | "Hyperlink" | "Light1" | "Light2"): OfficeExtension.ClientResult<string>;
@@ -185557,7 +186135,7 @@ declare namespace PowerPoint {
          * @remarks
          * [Api set: PowerPointApi 1.10]
          *
-         * @param color The theme color.
+         * @param color The theme color. The values `none` and `mixed` are invalid for this API.
          * @param rgbColor The color value in #RRGGBB format (e.g., "FFA500") or as a named HTML color (e.g., "orange").
          */
         setThemeColor(color: PowerPoint.ThemeColor, rgbColor: string): void;
@@ -185567,7 +186145,7 @@ declare namespace PowerPoint {
          * @remarks
          * [Api set: PowerPointApi 1.10]
          *
-         * @param color The theme color.
+         * @param color The theme color. The values `none` and `mixed` are invalid for this API.
          * @param rgbColor The color value in #RRGGBB format (e.g., "FFA500") or as a named HTML color (e.g., "orange").
          */
         setThemeColor(color: "Mixed" | "None" | "Accent1" | "Accent2" | "Accent3" | "Accent4" | "Accent5" | "Accent6" | "Dark1" | "Dark2" | "FollowedHyperlink" | "Hyperlink" | "Light1" | "Light2", rgbColor: string): void;
@@ -192313,6 +192891,7 @@ declare namespace PowerPoint {
         constructor(url?: string);
         readonly presentation: Presentation;
         readonly application: Application;
+        readonly sensitivityLabelsCatalog: any;
     }
     /**
      * Executes a batch script that performs actions on the PowerPoint object model, using a new RequestContext. When the promise is resolved, any tracked objects that were automatically allocated during execution will be released.

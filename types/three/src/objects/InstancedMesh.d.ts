@@ -20,10 +20,6 @@ export interface InstancedMeshJSON extends MeshJSONObject {
     object: InstancedMeshJSONObject;
 }
 
-export interface InstancedMeshEventMap extends Object3DEventMap {
-    dispose: {};
-}
-
 /**
  * A special version of {@link THREE.Mesh | Mesh} with instanced rendering support
  * @remarks
@@ -39,7 +35,7 @@ export interface InstancedMeshEventMap extends Object3DEventMap {
 export class InstancedMesh<
     TGeometry extends BufferGeometry = BufferGeometry,
     TMaterial extends Material | Material[] = Material | Material[],
-    TEventMap extends InstancedMeshEventMap = InstancedMeshEventMap,
+    TEventMap extends Object3DEventMap = Object3DEventMap,
 > extends Mesh<TGeometry, TMaterial, TEventMap> {
     /**
      * Read-only flag to check if a given object is of type {@link InstancedMesh}.
@@ -53,14 +49,6 @@ export class InstancedMesh<
      * You have to set {@link InstancedBufferAttribute.needsUpdate | .instanceMatrix.needsUpdate()} flag to `true` if you modify instanced data via {@link setMatrixAt | .setMatrixAt()}.
      */
     instanceMatrix: InstancedBufferAttribute;
-
-    /**
-     * Represents the local transformation of all instances of the previous frame.
-     * Required for computing velocity. Maintained in {@link InstanceNode}.
-     *
-     * @default null
-     */
-    previousInstancedMatrix: InstancedBufferAttribute | null;
 
     /**
      * Represents the colors of all instances.
@@ -126,7 +114,7 @@ export class InstancedMesh<
      * @param index The index of an instance. Values have to be in the range `[0, count]`. Expects a `Integer`
      * @param color This color object will be set to the color of the defined instance.
      */
-    getColorAt(index: number, color: Color): void;
+    getColorAt(index: number, color: Color): Color;
 
     /**
      * Sets the given color to the defined instance
@@ -135,14 +123,14 @@ export class InstancedMesh<
      * @param index The index of an instance. Values have to be in the range `[0, count]`. Expects a `Integer`
      * @param color The color of a single instance.
      */
-    setColorAt(index: number, color: Color): void;
+    setColorAt(index: number, color: Color): this;
 
     /**
      * Get the local transformation matrix of the defined instance.
      * @param index The index of an instance Values have to be in the range `[0, count]`. Expects a `Integer`
      * @param matrix This 4x4 matrix will be set to the local transformation matrix of the defined instance.
      */
-    getMatrixAt(index: number, matrix: Matrix4): void;
+    getMatrixAt(index: number, matrix: Matrix4): Matrix4;
 
     /**
      * Get the morph target weights of the defined instance.
@@ -159,7 +147,7 @@ export class InstancedMesh<
      * @param index The index of an instance. Values have to be in the range `[0, count]`. Expects a `Integer`
      * @param matrix A 4x4 matrix representing the local transformation of a single instance.
      */
-    setMatrixAt(index: number, matrix: Matrix4): void;
+    setMatrixAt(index: number, matrix: Matrix4): this;
 
     /**
      * Sets the morph target weights to the defined instance. Make sure you set {@link .morphTexture}{@link .needsUpdate}
@@ -167,7 +155,7 @@ export class InstancedMesh<
      * @param index The index of an instance. Values have to be in the range [0, count].
      * @param mesh A mesh with {@link .morphTargetInfluences} property containing the morph target weights of a single instance.
      */
-    setMorphAt(index: number, mesh: Mesh): void;
+    setMorphAt(index: number, mesh: Mesh): this;
 
     /**
      * No effect in {@link InstancedMesh}.
@@ -181,7 +169,7 @@ export class InstancedMesh<
      * @remarks
      * Call this method whenever this instance is no longer used in your app.
      */
-    dispose(): this;
+    dispose(): void;
 
     toJSON(meta?: JSONMeta): InstancedMeshJSON;
 }

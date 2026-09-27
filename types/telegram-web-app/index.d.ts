@@ -617,6 +617,18 @@ export interface WebApp {
     requestContact(callback?: (success: boolean, response: RequestContactResponse) => void): void;
 
     /**
+     * A method that opens a dialog allowing the user to select an existing chat
+     * or create a new one. If an optional _callback_ parameter is provided,
+     * the _callback_ function will be called with a boolean as the first argument,
+     * indicating whether the message was successfully sent.
+     * The request id passed to this method must belong to a {@link https://core.telegram.org/bots/api#preparedkeyboardbutton | PreparedKeyboardButton}
+     * previously obtained via the Bot API method {@link https://core.telegram.org/bots/api#savepreparedkeyboardbutton | savePreparedKeyboardButton}.
+     *
+     * @since Bot API 9.6+
+     */
+    requestChat(req_id: string, callback?: (success: boolean) => void): void;
+
+    /**
      * A method that informs the Telegram app that the Mini App is ready to be displayed.
      * It is recommended to call this method as early as possible, as soon as all essential interface elements are loaded.
      * Once this method is called, the loading placeholder is hidden and the Mini App is shown.
@@ -1341,6 +1353,11 @@ export interface WebAppInitData {
      * messages via the answerWebAppQuery method.
      */
     query_id?: string;
+    /**
+     * A unique identifier for the chat join request query, required for
+     * processing the query via the method {@link https://core.telegram.org/bots/api#answerchatjoinrequestquery|answerChatJoinRequestQuery}.
+     */
+    chat_join_request_query_id?: string;
     /** An object containing data about the current user. */
     user?: WebAppUser;
     /**

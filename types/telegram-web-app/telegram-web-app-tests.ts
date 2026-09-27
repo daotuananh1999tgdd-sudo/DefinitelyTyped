@@ -138,3 +138,9 @@ app.SecondaryButton.iconCustomEmojiId; // $ExpectType string
 app.SecondaryButton.setParams({
     icon_custom_emoji_id: "", // $ExpectType string
 });
+
+app.requestChat("req_id", (success) => {
+    success; // $ExpectType boolean
+});
+
+app.initDataUnsafe.chat_join_request_query_id; // $ExpectType string | undefined

@@ -265,7 +265,11 @@ mParticle.Rokt.hashSha256(true);
 mParticle.Rokt.hashSha256(undefined);
 mParticle.Rokt.hashSha256(null);
 
-mParticle.generateHash("test-string");
+mParticle.Rokt.onShoppableAdsReady(() => {
+    // shoppable ads ready
+});
+
+const generatedHash: number = mParticle.generateHash("test-string");
 
 mParticle.ready(() => {
     console.log("hi");
@@ -558,6 +562,8 @@ const identifyIdentities: mParticle.IdentifyRequest = {
         twitter: "email",
         microsoft: "email",
         yahoo: "email",
+        email_sha256: "email",
+        mobile_sha256: "email",
     },
 };
 

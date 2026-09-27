@@ -7,6 +7,7 @@ import {
     beforeEach,
     describe,
     expectFailure,
+    getTestContext,
     it,
     Mock,
     mock,
@@ -50,6 +51,7 @@ run({
     isolation: "process",
     testNamePatterns: ["executed", /^core-/],
     testSkipPatterns: ["excluded", /^lib-/],
+    testTagFilters: ["tag1", "tag2"],
     only: true,
     setup: (reporter) => {
         // $ExpectType TestsStream
@@ -68,7 +70,12 @@ run({
     lineCoverage: 70,
     branchCoverage: 50,
     functionCoverage: 80,
+    randomize: true,
+    randomSeed: 1029384756,
     rerunFailuresFilePath: "/path/to/file.json",
+    env: {
+        MY_TEST_PATH: "/path/to/tests",
+    },
 });
 
 // TestsStream should be a NodeJS.ReadableStream
@@ -126,6 +133,10 @@ test(undefined, undefined, t => {
     // $ExpectType void
     t.diagnostic("tap diagnostic");
     // $ExpectType void
+    t.log("message");
+    // $ExpectType void
+    t.log("data", [1, 2, 3]);
+    // $ExpectType void
     t.runOnly(true);
     // $ExpectType void
     t.skip("skip reason");
@@ -172,6 +183,10 @@ test(undefined, undefined, t => {
     t.error;
     // $ExpectType number
     t.attempt;
+    // $ExpectType readonly string[]
+    t.tags;
+    // $ExpectType number | undefined
+    t.workerId;
 });
 
 // Test the subtest approach.
@@ -377,6 +392,13 @@ it.expectFailure("x", {
     timeout: Infinity,
 });
 
+// expectFailure predicates
+test({ expectFailure: "message" });
+test({ expectFailure: Error });
+test({ expectFailure: /error/ });
+test({ expectFailure: { code: "ERR_INVALID_ARG_TYPE" } });
+test({ expectFailure: (err) => err instanceof TypeError });
+
 // Test with suite context
 describe(s => {
     // $ExpectType SuiteContext
@@ -506,6 +528,22 @@ suite("foo", (context) => {
     context.name;
     // $ExpectType AbortSignal
     context.signal;
+    // $ExpectType boolean
+    context.passed;
+    // $ExpectType number
+    context.attempt;
+
+    context.diagnostic("diagnostic");
+    context.log("message");
+    context.log("data", [1, 2, 3]);
+});
+
+suite("test tags", () => {
+    describe("database", { tags: ["db"] }, () => {
+        it("reads a row"); // tags: ['db']
+        it("writes a row", { tags: ["integration"] }); // tags: ['db', 'integration']
+        it("reconnects after disconnect", { tags: ["flaky"] }); // tags: ['db', 'flaky']
+    });
 });
 
 // Hooks
@@ -841,15 +879,12 @@ test("mocks a module", (t) => {
     // module specifier as a string
     // $ExpectType MockModuleContext
     const mock = t.mock.module("node:readline", {
-        namedExports: {
-            fn() {
+        exports: {
+            default: class Exported {},
+            foo() {
                 return 42;
             },
-        },
-        defaultExport: {
-            foo() {
-                return "bar";
-            },
+            bar: 42,
         },
         cache: true,
     });
@@ -976,6 +1011,22 @@ class TestReporter extends Transform {
                     null,
                     `${name}/${details.duration_ms}/${details.type}/${details.error.cause}/
                     ${nesting}/${testNumber}/${todo}/${skip}/${file}/${column}/${line}`,
+                );
+                break;
+            }
+            case "test:interrupted": {
+                const { tests } = event.data;
+                callback(
+                    null,
+                    tests.map((test) => `${test.name}/${test.nesting}/${test.file}/${test.column}/${test.line}`),
+                );
+                break;
+            }
+            case "test:log": {
+                const { file, column, line, name, message, data } = event.data;
+                callback(
+                    null,
+                    `${name}/${file}/${column}/${line}/${message}/${data}`,
                 );
                 break;
             }
@@ -1110,6 +1161,8 @@ test("planning with streams", (t: TestContext, done) => {
         done();
     });
 });
+
+getTestContext(); // $ExpectType TestContext | SuiteContext | undefined
 
 // Test custom assertion functions.
 {

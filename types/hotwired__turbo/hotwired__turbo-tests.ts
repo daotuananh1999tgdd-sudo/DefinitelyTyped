@@ -7,14 +7,20 @@ import {
     disconnectStreamSource,
     navigator,
     NavigatorDelegate,
+    PageSnapshot,
+    PageView,
     ProgressBar,
     registerAdapter,
     renderStreamMessage,
     session,
+    SnapshotCache,
     start,
     StreamActions,
     StreamMessage,
     StreamSource,
+    TurboHistory,
+    TurboStreamAction,
+    TurboStreamActions,
     Visit,
     visit,
     VisitOptions,
@@ -38,6 +44,16 @@ turboFrame.loading = "lazy";
 turboFrame.loading = "slow";
 
 turboFrame.reload().catch(console.error);
+
+// $ExpectType string | null
+turboFrame.src;
+turboFrame.src = "/messages";
+turboFrame.src = null;
+
+// $ExpectType "morph" | null
+turboFrame.refresh;
+turboFrame.refresh = "morph";
+turboFrame.refresh = null;
 
 const turboStream = document.querySelector("turbo-stream")!;
 
@@ -101,6 +117,19 @@ StreamActions.log = function() {
     console.log(this.getAttribute("message"));
 };
 
+// Test TurboStreamActions / TurboStreamAction exports
+// $ExpectType TurboStreamActions
+StreamActions;
+
+const customStreamAction: TurboStreamAction = function() {
+    // $ExpectType StreamElement
+    this;
+};
+StreamActions.custom = customStreamAction;
+
+const allStreamActions: TurboStreamActions = StreamActions;
+allStreamActions.log;
+
 document.addEventListener("turbo:before-fetch-request", function(event) {
     // $ExpectType FetchRequestHeaders
     const headers = event.detail.fetchOptions.headers;
@@ -150,6 +179,13 @@ document.addEventListener("turbo:submit-end", function(event) {
     }
 });
 
+document.addEventListener("turbo:before-morph-attribute", function(event) {
+    // $ExpectType string
+    event.detail.attributeName;
+    // $ExpectType "update" | "remove"
+    event.detail.mutationType;
+});
+
 // Test start() function
 start();
 
@@ -190,7 +226,12 @@ navigator.delegate;
 navigator.delegate.adapter;
 
 // Test ProgressBar via BrowserAdapter cast
+// BrowserAdapter is not a runtime export of @hotwired/turbo, only a type
+// @ts-expect-error
+new BrowserAdapter();
 const browserAdapter = navigator.delegate.adapter as BrowserAdapter;
+const browserAdapterAsAdapter: Adapter = browserAdapter;
+browserAdapterAsAdapter.visitStarted;
 // $ExpectType ProgressBar
 browserAdapter.progressBar;
 browserAdapter.progressBar.setValue(0);
@@ -264,6 +305,12 @@ turboStream.templateElement = document.createElement("template");
 // @ts-expect-error - templateContent is readonly
 turboStream.templateContent = document.createDocumentFragment();
 
+// Test StreamElement.targetElements
+// $ExpectType Element[]
+turboStream.targetElements;
+// @ts-expect-error - targetElements is readonly
+turboStream.targetElements = [];
+
 const eventSource = new EventSource("https://example.com/stream");
 const webSocket = new WebSocket("wss://example.com/stream");
 
@@ -278,14 +325,82 @@ disconnectStreamSource(webSocket);
 // @ts-expect-error
 connectStreamSource({});
 
-const streamMessage = new StreamMessage(document.createDocumentFragment());
+const streamMessage: StreamMessage = { fragment: document.createDocumentFragment() };
 renderStreamMessage("<turbo-stream></turbo-stream>");
 renderStreamMessage(streamMessage);
 Turbo.renderStreamMessage("<turbo-stream></turbo-stream>");
 Turbo.renderStreamMessage(streamMessage);
 
-// $ExpectType "text/vnd.turbo-stream.html"
-StreamMessage.contentType;
-
-// $ExpectType StreamMessage
+// StreamMessage is not a runtime export of @hotwired/turbo, only a type
+// @ts-expect-error
+new StreamMessage(document.createDocumentFragment());
+// @ts-expect-error
 StreamMessage.wrap("<turbo-stream></turbo-stream>");
+
+// Test TurboHistory via session.history
+// $ExpectType TurboHistory
+session.history;
+// $ExpectType TurboHistory
+Turbo.session.history;
+
+session.history.push(new URL("https://example.com"));
+session.history.push(new URL("https://example.com"), "abc-123");
+session.history.replace(new URL("https://example.com"));
+session.history.replace(new URL("https://example.com"), "abc-123");
+
+// $ExpectType URL
+session.history.location;
+// $ExpectType string
+session.history.restorationIdentifier;
+
+// Test session getters
+// $ExpectType URL
+session.location;
+// $ExpectType string
+session.restorationIdentifier;
+// $ExpectType boolean
+session.started;
+// $ExpectType boolean
+session.enabled;
+
+// Test PageView via session.view
+// PageView and SnapshotCache are not runtime exports of @hotwired/turbo, only types
+// @ts-expect-error
+new PageView(session, document.documentElement);
+// @ts-expect-error
+new SnapshotCache(10);
+// $ExpectType PageView
+session.view;
+// $ExpectType PageView
+Turbo.session.view;
+// @ts-expect-error - view cannot be reassigned
+session.view = session.view;
+// $ExpectType URL
+session.view.lastRenderedLocation;
+session.view.lastRenderedLocation = new URL("https://example.com");
+// $ExpectType HTMLElement
+session.view.element;
+// $ExpectType boolean
+session.view.forceReloaded;
+// $ExpectType PageSnapshot
+session.view.snapshot;
+// $ExpectType Promise<PageSnapshot | undefined>
+session.view.cacheSnapshot();
+session.view.cacheSnapshot(PageSnapshot.fromHTMLString("<html><body></body></html>"));
+// $ExpectType PageSnapshot | undefined
+session.view.getCachedSnapshotForLocation(new URL("https://example.com"));
+session.view.clearSnapshotCache();
+
+// Test SnapshotCache via session.view.snapshotCache
+// $ExpectType SnapshotCache
+session.view.snapshotCache;
+// $ExpectType boolean
+session.view.snapshotCache.has(new URL("https://example.com"));
+// $ExpectType PageSnapshot | undefined
+session.view.snapshotCache.get(new URL("https://example.com"));
+// $ExpectType PageSnapshot
+session.view.snapshotCache.put(
+    new URL("https://example.com"),
+    PageSnapshot.fromHTMLString("<html><body></body></html>"),
+);
+session.view.snapshotCache.clear();

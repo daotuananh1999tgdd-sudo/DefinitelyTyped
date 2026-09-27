@@ -153,6 +153,8 @@ instance.getEnvironment();
 
 instance.getVersion();
 
+const instanceGeneratedHash: number = instance.generateHash("test-string");
+
 instance.init("apiKey", config);
 instance.init("apiKey", config, "instance");
 
@@ -496,6 +498,8 @@ const identifyIdentities: mParticle.IdentifyRequest = {
         twitter: "email",
         microsoft: "email",
         yahoo: "email",
+        email_sha256: "email",
+        mobile_sha256: "email",
     },
 };
 
@@ -822,6 +826,10 @@ mParticle.Rokt.hashAttributes({
 mParticle.Rokt.setExtensionData({
     "analytics": { sessionId: "abc123" },
     "personalization": { variant: "A" },
+});
+
+mParticle.Rokt.onShoppableAdsReady(() => {
+    console.log("Shoppable ads ready");
 });
 
 // Test with identifier

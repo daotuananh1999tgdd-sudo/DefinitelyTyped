@@ -1,4 +1,4 @@
-import { backup, constants, DatabaseSync, StatementSync } from "node:sqlite";
+import { backup, constants, DatabaseLimits, DatabaseSync, StatementSync } from "node:sqlite";
 import { TextEncoder } from "node:util";
 
 {
@@ -41,6 +41,9 @@ import { TextEncoder } from "node:util";
             result: (count) => count,
         },
     );
+
+    database.deserialize(database.serialize());
+    database.deserialize(database.serialize("db"), { dbName: "db" });
 
     const insert = database.prepare("INSERT INTO types (key, int, double, text, buf) VALUES (?, ?, ?, ?, ?)");
     insert.setReadBigInts(true);
@@ -94,7 +97,8 @@ import { TextEncoder } from "node:util";
 
 {
     const database = new DatabaseSync(":memory:", { allowExtension: true });
-    database.loadExtension("/path/to/extension.so");
+    database.loadExtension("./decimal.dylib");
+    database.loadExtension("./base64.dylib", "sqlite3_base64_init");
     database.enableLoadExtension(false);
 }
 
@@ -188,4 +192,14 @@ import { TextEncoder } from "node:util";
         }
         return constants.SQLITE_OK;
     });
+}
+
+{
+    const db = new DatabaseSync(":memory:", {
+        limits: { attach: 10, column: 2000, compoundSelect: 500 },
+    });
+
+    let k!: keyof DatabaseLimits;
+    db.limits[k]; // $ExpectType number
+    db.limits[k] = 100;
 }

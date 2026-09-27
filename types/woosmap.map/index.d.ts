@@ -1540,7 +1540,7 @@ declare namespace woosmap.map {
          */
         disableDefaultUI?: boolean;
         /**
-         * Disable the tilt control for the users, (default: false).
+         * Disable the tilt and rotation controls for the users. When set to `true`, this prevents map tilt as well as rotation via touch gestures (two-finger rotate) and keyboard shortcuts (Shift+Arrow keys), (default: false).
          */
         disableTilt?: boolean;
         /**
@@ -1563,7 +1563,10 @@ declare namespace woosmap.map {
          */
         heading?: number;
         /**
-         * Whether to display the map type control. Defaults to false.
+         * Whether to display the map type control. When unset, the control auto-attaches
+         * once the loaded maptype advertises the `satellite` capability. Pass `true`/`false`
+         * explicitly to opt in or out. Note: `get('mapTypeControl')` reflects the user
+         * option, not attachment state — it stays `false` while auto-attach is pending.
          */
         mapTypeControl?: boolean;
         /**
@@ -1593,6 +1596,12 @@ declare namespace woosmap.map {
          * The initial tilt to start from.
          */
         tilt?: number;
+        /**
+         * Opt into the upcoming visual refresh of the default basemap styles.
+         * Defaults to false. Will be removed once the refreshed styles become
+         * the default.
+         */
+        visualRefresh?: boolean;
         /**
          * The initial map zoom level to start from.
          */
@@ -3385,6 +3394,9 @@ declare namespace woosmap.map.localities {
         | woosmap.map.localities.DeprecatedLocalitiesTypes
         | "country"
         | "admin_level"
+        | "admin_level_1"
+        | "admin_level_2"
+        | "admin_level_3"
         | "postal_code"
         | "address"
         | "route"

@@ -269,7 +269,7 @@ interface Upload {
 }
 
 interface GenerateHash {
-    (value: string): string;
+    (value: string): number;
 }
 
 interface CreateConsentState {
@@ -433,6 +433,10 @@ interface HashSha256 {
 
 interface SetExtensionData {
     (extensionData: RoktPartnerExtensionData<unknown>): void;
+}
+
+interface OnShoppableAdsReady {
+    (callback: () => void): void;
 }
 
 export const endSession: EndSession;
@@ -610,6 +614,9 @@ export namespace eCommerce {
     const logImpression: LogImpression;
     const logProductAction: LogProductAction;
     const logPromotion: LogPromotion;
+    /**
+     * @deprecated Use logProductAction with ProductActionType.Purchase instead.
+     */
     const logPurchase: LogPurchase;
     /**
      * @deprecated logRefund has been deprecated
@@ -627,6 +634,7 @@ export namespace Rokt {
     const hashSha256: HashSha256;
     const setExtensionData: SetExtensionData;
     const use: Use;
+    const onShoppableAdsReady: OnShoppableAdsReady;
 }
 
 export interface IdentifyRequest {
@@ -681,6 +689,8 @@ export interface UserIdentities {
     twitter?: string | null;
     microsoft?: string | null;
     yahoo?: string | null;
+    email_sha256?: string | null;
+    mobile_sha256?: string | null;
 }
 
 interface Cart {
@@ -892,6 +902,9 @@ declare class mParticleInstance {
         logImpression: LogImpression;
         logProductAction: LogProductAction;
         logPromotion: LogPromotion;
+        /**
+         * @deprecated Use logProductAction with ProductActionType.Purchase instead.
+         */
         logPurchase: LogPurchase;
         logRefund: LogRefund;
         setCurrencyCode: SetCurrencyCode;
@@ -903,6 +916,7 @@ declare class mParticleInstance {
         hashSha256: HashSha256;
         setExtensionData: SetExtensionData;
         use: Use;
+        onShoppableAdsReady: OnShoppableAdsReady;
     };
     MPSideloadedKit: typeof MPSideloadedKit;
     PromotionType: {

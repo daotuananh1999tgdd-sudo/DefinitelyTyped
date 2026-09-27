@@ -1,4 +1,4 @@
-// For Library Version: 1.145.0
+// For Library Version: 1.152.0
 
 declare module "sap/ui/mdc/AggregationBaseDelegate" {
   import BaseDelegate from "sap/ui/mdc/BaseDelegate";
@@ -1435,6 +1435,8 @@ declare module "sap/ui/mdc/field/MultiValueFieldDelegate" {
 
   import MultiValueField from "sap/ui/mdc/MultiValueField";
 
+  import MultiValueFieldItem from "sap/ui/mdc/field/MultiValueFieldItem";
+
   /**
    * Delegate for {@link sap.ui.mdc.MultiValueField MultiValueField}.
    *
@@ -1470,7 +1472,13 @@ declare module "sap/ui/mdc/field/MultiValueFieldDelegate" {
      * Items can be removed, updated, or added. Use the binding information of the {@link sap.ui.mdc.MultiValueField MultiValueField }
      * control to update the data in the related model.
      *
+     * If updating of the items fails, return a rejected `Promise` to sync the conditions with the items. Set
+     * a `valueState` if needed.
+     *
      * @since 1.142
+     *
+     * @returns null or a `Promise` returning an array containing the current items after update. If update
+     * of items fails, the `Promise` needs to be rejected
      */
     updateItemsFromConditions(
       /**
@@ -1482,7 +1490,7 @@ declare module "sap/ui/mdc/field/MultiValueFieldDelegate" {
        * Current conditions of the {@link sap.ui.mdc.MultiValueField MultiValueField} control
        */
       aConditions: ConditionObject[]
-    ): void;
+    ): null | Promise<MultiValueFieldItem[]>;
   }
   const MultiValueFieldDelegate: MultiValueFieldDelegate;
   export default MultiValueFieldDelegate;
@@ -1496,6 +1504,10 @@ declare module "sap/ui/mdc/FilterBarDelegate" {
   import FilterField from "sap/ui/mdc/FilterField";
 
   import FilterBarValidationStatus from "sap/ui/mdc/enums/FilterBarValidationStatus";
+
+  import FilterBarBase from "sap/ui/mdc/filterbar/FilterBarBase";
+
+  import { ConditionObject } from "sap/ui/mdc/condition/Condition";
 
   /**
    * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all
@@ -1578,14 +1590,9 @@ declare module "sap/ui/mdc/FilterBarDelegate" {
        */
       oFilterBar: FilterBar,
       /**
-       * Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+       * Status of the validation {@link sap.ui.mdc.enums.FilterBarValidationStatus}
        */
-      mValidation?: {
-        /**
-         * Status of the validation {@link sap.ui.mdc.enums.FilterBarValidationStatus}
-         */
-        status?: string;
-      }
+      sValidationStatus?: string
     ): FilterBarValidationStatus;
     /**
      * Retrieves the relevant metadata for a given payload and returns the property info array.
@@ -1607,6 +1614,29 @@ declare module "sap/ui/mdc/FilterBarDelegate" {
        */
       oFilterBar: FilterBar
     ): Promise<PropertyInfo[]>;
+    /**
+     * Returns default values for a property.
+     *
+     * This function is called when a user adds a condition representing default values or a variant using such
+     * a condition is applied.
+     *
+     * As this function might be called multiple times, the default values should be cached and not be determined
+     * again for each call.
+     *
+     * @since 1.149
+     *
+     * @returns Array of default value conditions in external format
+     */
+    getDefaultValues(
+      /**
+       * Instance of the {@link sap.ui.mdc.filterbar.FilterBarBase FilterBar} control
+       */
+      oFilterBar: FilterBarBase,
+      /**
+       * Property key of the filter field
+       */
+      sPropertyKey: string
+    ): ConditionObject[];
     /**
      * propertyInfo This method is called during the appliance of the remove condition change. The intention
      * is to update the {@link sap.ui.mdc.FilterBarBase#setPropertyInfo propertyInfo} property.
@@ -2251,6 +2281,14 @@ declare module "sap/ui/mdc/odata/v4/TableDelegate" {
    * The `p13nMode` `Group` is not supported if the table type is {@link sap.ui.mdc.table.TreeTableType TreeTable}.
    * This cannot be changed in your delegate implementation.
    *
+   * **Note:** When grouping in the {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the paths
+   * required for the group header text (the grouped property's path and, if defined, the path of its text
+   * property) are conveyed via {@link sap.ui.model.Sorter#getGroupPaths}. The {@link sap.ui.model.odata.v4.ODataListBinding }
+   * evaluates these paths only if the {@link sap.ui.model.odata.v4.ODataModel} runs with `autoExpandSelect`
+   * enabled; without it, paths that traverse a `NavigationProperty` are not loaded and the group header text
+   * is incomplete. Applications that must run without `autoExpandSelect` and require grouping by such properties
+   * need to override the delegate to add the required `$expand` to the binding parameters.
+   *
    * All binding-related limitations regarding selection also apply in the context of this delegate. For details,
    * see {@link sap.ui.model.odata.v4.Context#setSelected} and {@link sap.ui.model.odata.v4.ODataModel#bindList}.
    *
@@ -2720,6 +2758,31 @@ declare module "sap/ui/mdc/TableDelegate" {
        */
       oBindingInfo: AggregationBindingInfo
     ): void;
+    /**
+     * Validation hook that is invoked when the user confirms the personalization dialog.
+     *
+     * Applications can use this hook to validate the current personalization state, display their own messages,
+     * and prevent the dialog from closing by resolving to `false`.
+     *
+     * Providing accessible feedback (e.g. screen reader announcements) while the validation is ongoing or once
+     * it has completed is the responsibility of the implementation.
+     *
+     * @since 1.152
+     *
+     * @returns A promise that resolves to `false` (or the literal value `false`) to prevent the dialog from
+     * closing. Any other value allows the dialog to close.
+     */
+    validateP13nState(
+      /**
+       * Instance of the table
+       */
+      oTable: Table,
+      /**
+       * The theoretical (not yet applied) external state of the table's personalization. The format matches the
+       * one processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+       */
+      oState: object
+    ): Promise<boolean> | boolean;
   }
   const TableDelegate: TableDelegate;
   export default TableDelegate;
@@ -3157,15 +3220,15 @@ declare module "sap/ui/mdc/ValueHelpDelegate" {
 
   import { ConditionObject } from "sap/ui/mdc/condition/Condition";
 
-  import FilterableListContent from "sap/ui/mdc/valuehelp/base/FilterableListContent";
+  import ListContent from "sap/ui/mdc/valuehelp/base/ListContent";
 
   import Context from "sap/ui/model/Context";
+
+  import FilterableListContent from "sap/ui/mdc/valuehelp/base/FilterableListContent";
 
   import { util } from "sap/ui/mdc/library";
 
   import Filter from "sap/ui/model/Filter";
-
-  import ListContent from "sap/ui/mdc/valuehelp/base/ListContent";
 
   import Content from "sap/ui/mdc/valuehelp/base/Content";
 
@@ -3233,6 +3296,29 @@ declare module "sap/ui/mdc/ValueHelpDelegate" {
        */
       oConditionB: ConditionObject
     ): boolean;
+    /**
+     * Creates a condition that represents the given context for 'Select from list' scenarios.
+     * By default, this method creates a {@link sap.ui.mdc.condition.ConditionObject Condition} representing
+     * an "equal to" filter.
+     *
+     * @since 1.150.0
+     *
+     * @returns Condition representing the given context
+     */
+    createConditionForContext(
+      /**
+       * The `ValueHelp` control instance
+       */
+      oValueHelp: ValueHelp,
+      /**
+       * `ValueHelp` content instance
+       */
+      oContent: ListContent,
+      /**
+       * Entry of a given list
+       */
+      oContext: Context
+    ): ConditionObject;
     /**
      * Provides the possibility to convey custom data in conditions. This enables an application to enhance
      * conditions with data relevant for combined key or out parameter scenarios.
@@ -3338,7 +3424,7 @@ declare module "sap/ui/mdc/ValueHelpDelegate" {
     ): Promise<util.FilterConditionMap> | util.FilterConditionMap;
     /**
      * Returns filters that are used when updating the binding of the `ValueHelp`.
-     * By default, this method returns a set of {@link sap.ui.model.Filter Filters} originating from an available
+     *  By default, this method returns a set of {@link sap.ui.model.Filter Filters} originating from an available
      * {@link sap.ui.mdc.FilterBar FilterBar} or the delegate's own {@link module:sap/ui/mdc/ValueHelpDelegate.getFilterConditions getFilterConditions }
      * implementation.
      *
@@ -3369,16 +3455,16 @@ declare module "sap/ui/mdc/ValueHelpDelegate" {
      * the same way.
      *
      * For each relevant column all items are searched for an exact match first and again with a startsWith
-     * filter afterwards, if necessary.
+     * filter afterwards, if necessary (and supported by the used data type).
      *
      * If the `caseSensitive` property is disabled, whichever entry comes first, wins, whether the user's input
      * is in lowercase or uppercase letters.
      *
      * {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}
      *
-     * @since 1.120.0
+     * @since 1.120
      *
-     * @returns Promise resolving in the `Context` that's relevant'
+     * @returns The `Context` that matches the user input best
      */
     getFirstMatch(
       /**
@@ -3393,7 +3479,7 @@ declare module "sap/ui/mdc/ValueHelpDelegate" {
        * Configuration
        */
       oConfig: ItemForValueConfiguration
-    ): Context;
+    ): Context | undefined;
     /**
      * Provides type information for list content filtering.
      * By default, this method returns an object of types per binding path, extracted from a binding template
@@ -3766,6 +3852,17 @@ declare module "sap/ui/mdc/library" {
   import FormatException from "sap/ui/model/FormatException";
 
   import ParseException from "sap/ui/model/ParseException";
+
+  export type DelegateConfig = {
+    /**
+     * Delegate module path
+     */
+    name: string;
+    /**
+     * defines application-specific information that can be used in the given delegate
+     */
+    payload?: any;
+  };
 
   /**
    * Acts a subset of the `FilterBarDelegate` that can be used in {@link module:sap/ui/mdc/TableDelegate.getFilterDelegate TableDelegate.getFilterDelegate }
@@ -4819,8 +4916,10 @@ declare module "sap/ui/mdc/Chart" {
      * Gets current value of property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/ChartDelegate ChartDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -5152,8 +5251,10 @@ declare module "sap/ui/mdc/Chart" {
      * Sets a new value for property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/ChartDelegate ChartDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -5518,8 +5619,10 @@ declare module "sap/ui/mdc/Chart" {
 
     /**
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/ChartDelegate ChartDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -5901,8 +6004,7 @@ declare module "sap/ui/mdc/chart/ActionLayoutData" {
   /**
    * Describes the settings that can be provided to the ActionLayoutData constructor.
    */
-  export interface $ActionLayoutDataSettings
-    extends $OverflowToolbarLayoutDataSettings {
+  export interface $ActionLayoutDataSettings extends $OverflowToolbarLayoutDataSettings {
     /**
      * Defines the position of the action within the group of chart actions.
      */
@@ -6039,8 +6141,7 @@ declare module "sap/ui/mdc/chart/ChartImplementationContainer" {
   /**
    * Describes the settings that can be provided to the ChartImplementationContainer constructor.
    */
-  export interface $ChartImplementationContainerSettings
-    extends $ControlSettings {
+  export interface $ChartImplementationContainerSettings extends $ControlSettings {
     /**
      * Toggles the visibility of the noDataContent & content
      */
@@ -6225,8 +6326,7 @@ declare module "sap/ui/mdc/chart/ChartSelectionDetails" {
   /**
    * Describes the settings that can be provided to the ChartSelectionDetails constructor.
    */
-  export interface $ChartSelectionDetailsSettings
-    extends $SelectionDetailsSettings {
+  export interface $ChartSelectionDetailsSettings extends $SelectionDetailsSettings {
     /**
      * Callback function that is called for each `SelectionDetailsItem` to determine if the navigation is enabled.
      * The callback is called with the following parameters:
@@ -7417,6 +7517,11 @@ declare module "sap/ui/mdc/condition/Operator" {
          * Function to determine the text copied into clipboard
          */
         getTextForCopy?: Function;
+        /**
+         * If set, the operator handles default values. The values are used for display and to create filters, but
+         * cannot be set manually.
+         */
+        useDefaultValues?: boolean;
       }
     );
 
@@ -7769,7 +7874,8 @@ declare module "sap/ui/mdc/Control" {
   export interface $ControlSettings extends $ControlSettings1 {
     /**
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
      * 	 - `name` defines the path to the `Delegate` module
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
@@ -7991,7 +8097,8 @@ declare module "sap/ui/mdc/Element" {
   export interface $ElementSettings extends $ElementSettings1 {
     /**
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
      * 	 - `name` defines the path to the `Delegate` module
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
@@ -8463,6 +8570,15 @@ declare module "sap/ui/mdc/enums/OperatorName" {
      * @since 1.99.0
      */
     DATETOYEAR = "DATETOYEAR",
+    /**
+     * "Default values" operator is using user-specific default values. The values themselves are not stored
+     * in variants.
+     *
+     * The operator is available for all types.
+     *
+     * @since 1.149.0
+     */
+    DefaultValues = "DefaultValues",
     /**
      * "empty" operator
      *
@@ -9347,6 +9463,18 @@ declare module "sap/ui/mdc/enums/TableRowActionType" {
    * @since 1.115
    */
   enum TableRowActionType {
+    /**
+     * Custom-defined row action
+     *
+     * @since 1.148
+     */
+    Custom = "Custom",
+    /**
+     * Row action for deletion
+     *
+     * @since 1.148
+     */
+    Delete = "Delete",
     /**
      * Navigation arrow (chevron) is shown
      */
@@ -13483,13 +13611,17 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
 
   import InvisibleText from "sap/ui/core/InvisibleText";
 
+  import { MessageType, ID } from "sap/ui/core/library";
+
+  import Message from "sap/ui/core/message/Message";
+
   import FilterBarValidationStatus from "sap/ui/mdc/enums/FilterBarValidationStatus";
 
   import FilterField from "sap/ui/mdc/FilterField";
 
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
-  import { ID } from "sap/ui/core/library";
+  import Message1 from "sap/ui/core/Message";
 
   import VariantManagement from "sap/ui/fl/variants/VariantManagement";
 
@@ -13588,6 +13720,28 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
        */
       oInvisibleText: InvisibleText
     ): void;
+    /**
+     * Adds a message to the {@link sap.ui.model.message.MessageModel MessageModel} for a `propertyKey`. The
+     * message is displayed on the corresponding {@link sap.ui.mdc.FilterField FilterField}.
+     *
+     * @since 1.147
+     *
+     * @returns The created message object
+     */
+    addMessage(
+      /**
+       * The `propertyKey` of the {@link sap.ui.mdc.FilterField FilterField}
+       */
+      sPropertyKey: string,
+      /**
+       * The message text
+       */
+      sMessage: string,
+      /**
+       * The message type
+       */
+      sMessageType: MessageType | keyof typeof MessageType
+    ): Message;
     /**
      * Attaches event handler `fnFunction` to the {@link #event:filtersChanged filtersChanged} event of this
      * `sap.ui.mdc.filterbar.FilterBarBase`.
@@ -13834,8 +13988,10 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
      * Gets current value of property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/FilterBarDelegate FilterBarDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -13893,6 +14049,19 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
      * @returns Value of property `liveMode`
      */
     getLiveMode(): boolean;
+    /**
+     * Returns all messages associated with the given `propertyKey` from the {@link sap.ui.model.message.MessageModel MessageModel}.
+     *
+     * @since 1.147
+     *
+     * @returns Array of messages for the given `propertyKey`
+     */
+    getMessages(
+      /**
+       * The `propertyKey` of the {@link sap.ui.mdc.FilterField FilterField}
+       */
+      sPropertyKey: string
+    ): Message[];
     /**
      * Gets the value of the basic search condition.
      *
@@ -13971,6 +14140,30 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
      */
     initializedWithMetadata(): Promise<any>;
     /**
+     * Removes a given message from the {@link sap.ui.model.message.MessageModel MessageModel}. The message
+     * is removed from the corresponding {@link sap.ui.mdc.FilterField FilterField}.
+     *
+     * @since 1.147
+     */
+    removeMessage(
+      /**
+       * The message to remove
+       */
+      oMessage: Message1
+    ): void;
+    /**
+     * Removes all messages for the given `propertyKey` from the {@link sap.ui.model.message.MessageModel MessageModel}.
+     * Clears the messages from the corresponding {@link sap.ui.mdc.FilterField FilterField}.
+     *
+     * @since 1.147
+     */
+    removeMessages(
+      /**
+       * The `propertyKey` of the {@link sap.ui.mdc.FilterField FilterField}
+       */
+      sPropertyKey: string
+    ): void;
+    /**
      * Sets the aggregated {@link #getBasicSearchField basicSearchField}.
      *
      *
@@ -13986,8 +14179,10 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
      * Sets a new value for property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/FilterBarDelegate FilterBarDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -14141,8 +14336,10 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
   export interface $FilterBarBaseSettings extends $ControlSettings {
     /**
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
-     *  The object has the following properties:
-     * 	 - `name` defines the path to the `Delegate` module
+     *  The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
+     * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/FilterBarDelegate FilterBarDelegate}.
+     *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
      *      Sample delegate object:
      * ```javascript
@@ -14198,8 +14395,8 @@ declare module "sap/ui/mdc/filterbar/FilterBarBase" {
      * aggregation) should be specified here, rather than in the `FilterField` configuration.
      *  **Note**: This property must not be bound.
      *  **Node**: Please check {@link sap.ui.mdc.filterbar.PropertyInfo} for more information about the supported
-     * inner elements. **Note**: Existing properties (set via `sap.ui.mdc.filterbar.FilterBarBase#setPropertyInfo`)
-     * must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/FilterBarDelegate.fetchProperties fetchProperties }
+     * inner elements. **Note**: Existing properties (set via {@link #setPropertyInfo setPropertyInfo}) must
+     * not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/FilterBarDelegate.fetchProperties fetchProperties }
      * callback. Otherwise validation errors might occur whenever personalization-related control features (such
      * as the opening of any personalization dialog) are activated.
      *
@@ -17359,6 +17556,8 @@ declare module "sap/ui/mdc/Table" {
 
   import DataStateIndicator from "sap/m/plugins/DataStateIndicator";
 
+  import UI5Element from "sap/ui/core/Element";
+
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
   import TableP13nMode from "sap/ui/mdc/enums/TableP13nMode";
@@ -17767,6 +17966,14 @@ declare module "sap/ui/mdc/Table" {
      */
     destroyDataStateIndicator(): this;
     /**
+     * Destroys the defaultExportSettings in the aggregation {@link #getDefaultExportSettings defaultExportSettings}.
+     *
+     * @since 1.148
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyDefaultExportSettings(): this;
+    /**
      * Destroys the noData in the aggregation {@link #getNoData noData}.
      *
      * @since 1.106
@@ -18084,11 +18291,27 @@ declare module "sap/ui/mdc/Table" {
      */
     getDataStateIndicator(): DataStateIndicator;
     /**
+     * Gets content of aggregation {@link #getDefaultExportSettings defaultExportSettings}.
+     *
+     * Default values shown in the export dialog.
+     *
+     * **Note:** These values are defaults shown to the user in the export dialog. The user can still modify
+     * them before export. If the user modifies a value in the dialog, the user choice takes precedence and
+     * is not overridden by event handlers.
+     *
+     * The expected type is `sap.ui.export.TableExportSettings`. The `sap.ui.export` library must be loaded
+     * before setting this aggregation.
+     *
+     * @since 1.148
+     */
+    getDefaultExportSettings(): UI5Element;
+    /**
      * Gets current value of property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
      *
-     * The object has the following properties:
+     * The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
      * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/TableDelegate TableDelegate}.
      *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
@@ -18645,11 +18868,25 @@ declare module "sap/ui/mdc/Table" {
       oDataStateIndicator: DataStateIndicator
     ): this;
     /**
+     * Sets the aggregated {@link #getDefaultExportSettings defaultExportSettings}.
+     *
+     * @since 1.148
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setDefaultExportSettings(
+      /**
+       * The defaultExportSettings to set
+       */
+      oDefaultExportSettings: UI5Element
+    ): this;
+    /**
      * Sets a new value for property {@link #getDelegate delegate}.
      *
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
      *
-     * The object has the following properties:
+     * The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
      * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/TableDelegate TableDelegate}.
      *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
@@ -19325,7 +19562,8 @@ declare module "sap/ui/mdc/Table" {
     /**
      * Object related to the `Delegate` module that provides the required APIs to execute model-specific logic.
      *
-     * The object has the following properties:
+     * The object has the following properties (see {@link sap.ui.mdc.DelegateConfig DelegateConfig}):
+     *
      * 	 - `name` defines the path to the `Delegate` module. The used delegate module must inherit from {@link module:sap/ui/mdc/TableDelegate TableDelegate}.
      *
      * 	 - `payload` (optional) defines application-specific information that can be used in the given delegate
@@ -19639,6 +19877,20 @@ declare module "sap/ui/mdc/Table" {
      * for the changes to take effect.
      */
     rowSettings?: RowSettings;
+
+    /**
+     * Default values shown in the export dialog.
+     *
+     * **Note:** These values are defaults shown to the user in the export dialog. The user can still modify
+     * them before export. If the user modifies a value in the dialog, the user choice takes precedence and
+     * is not overridden by event handlers.
+     *
+     * The expected type is `sap.ui.export.TableExportSettings`. The `sap.ui.export` library must be loaded
+     * before setting this aggregation.
+     *
+     * @since 1.148
+     */
+    defaultExportSettings?: UI5Element;
 
     /**
      * `DataStateIndicator` plugin that can be used to show binding-related messages.
@@ -19957,8 +20209,7 @@ declare module "sap/ui/mdc/table/ActionLayoutData" {
   /**
    * Describes the settings that can be provided to the ActionLayoutData constructor.
    */
-  export interface $ActionLayoutDataSettings
-    extends $OverflowToolbarLayoutDataSettings {
+  export interface $ActionLayoutDataSettings extends $OverflowToolbarLayoutDataSettings {
     /**
      * Defines the position of the action within the group of table actions.
      */
@@ -21466,6 +21717,16 @@ declare module "sap/ui/mdc/table/GridTableType" {
   /**
    * The table type info class for the metadata-driven table.
    *
+   *
+   * **Important Notes for `{@link sap.ui.mdc.table.RowSettings#setRowActionCount rowActionCount}`:**
+   *
+   *
+   * The `rowActionCount` property is used to determine the number of row actions that are displayed for each
+   * row in the table. The actual number of displayed actions can be limited by the underlying table type:
+   *
+   * 	 - `GridTable`: Maximum number of three actions including the overflow button. 0 means no actions are
+   *     visible.
+   *
    * @since 1.65
    */
   export default class GridTableType extends TableTypeBase {
@@ -21980,8 +22241,7 @@ declare module "sap/ui/mdc/table/ResponsiveColumnSettings" {
   /**
    * Describes the settings that can be provided to the ResponsiveColumnSettings constructor.
    */
-  export interface $ResponsiveColumnSettingsSettings
-    extends $ColumnSettingsSettings {
+  export interface $ResponsiveColumnSettingsSettings extends $ColumnSettingsSettings {
     /**
      * Defines the column importance.
      *
@@ -22030,6 +22290,18 @@ declare module "sap/ui/mdc/table/ResponsiveTableType" {
 
   /**
    * The table type info class for the metadata-driven table.
+   *
+   *
+   * **Important Notes for `{@link sap.ui.mdc.table.RowSettings#setRowActionCount rowActionCount}`:**
+   *
+   *
+   * The `rowActionCount` property is used to determine the number of row actions that are displayed for each
+   * row in the table. The actual number of displayed actions can be limited by the underlying table type:
+   *
+   *
+   * 	 - `ResponsiveTable`: Maximum of 2-3 actions depending on configuration (1 navigation action + 2 additional
+   *     actions)
+   * 	 - `rowActionCount` = 0: navigation action is always visible if it exists
    *
    * @since 1.65
    */
@@ -22535,6 +22807,8 @@ declare module "sap/ui/mdc/table/RowActionItem" {
      * Setting the type ensures default values for the properties `icon` and `text`. If an icon or text is set
      * explicitly, this setting is used.
      *
+     * Default value is `Custom`.
+     *
      *
      * @returns Value of property `type`
      */
@@ -22596,6 +22870,8 @@ declare module "sap/ui/mdc/table/RowActionItem" {
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
+     * Default value is `Custom`.
+     *
      *
      * @returns Reference to `this` in order to allow method chaining
      */
@@ -22603,7 +22879,7 @@ declare module "sap/ui/mdc/table/RowActionItem" {
       /**
        * New value for property `type`
        */
-      sType: TableRowActionType | keyof typeof TableRowActionType
+      sType?: TableRowActionType | keyof typeof TableRowActionType
     ): this;
     /**
      * Sets a new value for property {@link #getVisible visible}.
@@ -22839,6 +23115,49 @@ declare module "sap/ui/mdc/table/RowSettings" {
      */
     getNavigated(): boolean;
     /**
+     * Gets current value of property {@link #getRowActionCount rowActionCount}.
+     *
+     * Defines the number of row actions to display.
+     *
+     * This property is useful for bound row actions where the count cannot be determined automatically. If
+     * not set, the count is derived from:
+     * 	 - Bound actions: Defaults to 1 (must be set explicitly if multiple actions exist)
+     * 	 - Static actions: The length of the `rowActions` aggregation
+     *
+     * **Note:**
+     *  If the `rowActionCount` property is not explicitly set, the table will automatically determine the number
+     * of row actions that is displayed based on the configuration of the `RowSettings` and the underlying table
+     * type. In this case, the table will check how many actions are configured in the `RowSettings` and will
+     * display as many actions as possible up to the maximum number of actions supported by the underlying table
+     * type.
+     *
+     *
+     * If the `rowActionCount` property is explicitly set, its value will be used to determine how many row
+     * actions are displayed, regardless of the number of actions configured in the `RowSettings`. However,
+     * the actual number of displayed actions will still be limited by the maximum number of actions supported
+     * by the underlying table type.
+     *
+     * **Example:**
+     *  If the underlying table type supports a maximum number of 3 row actions, and there are 5 actions configured
+     * in the `RowSettings`:
+     *
+     *
+     * 	 - `rowActionCount` is not set, the table will display 3 actions (the maximum supported).
+     * 	 - `rowActionCount` is set to 2, the table will display 2 actions (as specified), even though more actions
+     *     are configured in the `RowSettings`.
+     *
+     * For bound row actions, the `rowActionCount` must be set explicitly, as the count cannot be determined
+     * automatically. For static actions, the count defaults to the length of the `rowActions` aggregation in
+     * the `RowSettings`.
+     *
+     * Default value is `-1`.
+     *
+     * @since 1.148
+     *
+     * @returns Value of property `rowActionCount`
+     */
+    getRowActionCount(): int;
+    /**
      * Gets content of aggregation {@link #getRowActions rowActions}.
      *
      * The actions that appear at the end of a row.
@@ -22965,6 +23284,56 @@ declare module "sap/ui/mdc/table/RowSettings" {
        */
       bNavigated?: boolean
     ): this;
+    /**
+     * Sets a new value for property {@link #getRowActionCount rowActionCount}.
+     *
+     * Defines the number of row actions to display.
+     *
+     * This property is useful for bound row actions where the count cannot be determined automatically. If
+     * not set, the count is derived from:
+     * 	 - Bound actions: Defaults to 1 (must be set explicitly if multiple actions exist)
+     * 	 - Static actions: The length of the `rowActions` aggregation
+     *
+     * **Note:**
+     *  If the `rowActionCount` property is not explicitly set, the table will automatically determine the number
+     * of row actions that is displayed based on the configuration of the `RowSettings` and the underlying table
+     * type. In this case, the table will check how many actions are configured in the `RowSettings` and will
+     * display as many actions as possible up to the maximum number of actions supported by the underlying table
+     * type.
+     *
+     *
+     * If the `rowActionCount` property is explicitly set, its value will be used to determine how many row
+     * actions are displayed, regardless of the number of actions configured in the `RowSettings`. However,
+     * the actual number of displayed actions will still be limited by the maximum number of actions supported
+     * by the underlying table type.
+     *
+     * **Example:**
+     *  If the underlying table type supports a maximum number of 3 row actions, and there are 5 actions configured
+     * in the `RowSettings`:
+     *
+     *
+     * 	 - `rowActionCount` is not set, the table will display 3 actions (the maximum supported).
+     * 	 - `rowActionCount` is set to 2, the table will display 2 actions (as specified), even though more actions
+     *     are configured in the `RowSettings`.
+     *
+     * For bound row actions, the `rowActionCount` must be set explicitly, as the count cannot be determined
+     * automatically. For static actions, the count defaults to the length of the `rowActions` aggregation in
+     * the `RowSettings`.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `-1`.
+     *
+     * @since 1.148
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setRowActionCount(
+      /**
+       * New value for property `rowActionCount`
+       */
+      iRowActionCount?: int
+    ): this;
   }
   /**
    * Describes the settings that can be provided to the RowSettings constructor.
@@ -22998,6 +23367,44 @@ declare module "sap/ui/mdc/table/RowSettings" {
     navigated?: boolean | PropertyBindingInfo | `{${string}}`;
 
     /**
+     * Defines the number of row actions to display.
+     *
+     * This property is useful for bound row actions where the count cannot be determined automatically. If
+     * not set, the count is derived from:
+     * 	 - Bound actions: Defaults to 1 (must be set explicitly if multiple actions exist)
+     * 	 - Static actions: The length of the `rowActions` aggregation
+     *
+     * **Note:**
+     *  If the `rowActionCount` property is not explicitly set, the table will automatically determine the number
+     * of row actions that is displayed based on the configuration of the `RowSettings` and the underlying table
+     * type. In this case, the table will check how many actions are configured in the `RowSettings` and will
+     * display as many actions as possible up to the maximum number of actions supported by the underlying table
+     * type.
+     *
+     *
+     * If the `rowActionCount` property is explicitly set, its value will be used to determine how many row
+     * actions are displayed, regardless of the number of actions configured in the `RowSettings`. However,
+     * the actual number of displayed actions will still be limited by the maximum number of actions supported
+     * by the underlying table type.
+     *
+     * **Example:**
+     *  If the underlying table type supports a maximum number of 3 row actions, and there are 5 actions configured
+     * in the `RowSettings`:
+     *
+     *
+     * 	 - `rowActionCount` is not set, the table will display 3 actions (the maximum supported).
+     * 	 - `rowActionCount` is set to 2, the table will display 2 actions (as specified), even though more actions
+     *     are configured in the `RowSettings`.
+     *
+     * For bound row actions, the `rowActionCount` must be set explicitly, as the count cannot be determined
+     * automatically. For static actions, the count defaults to the length of the `rowActions` aggregation in
+     * the `RowSettings`.
+     *
+     * @since 1.148
+     */
+    rowActionCount?: int | PropertyBindingInfo | `{${string}}`;
+
+    /**
      * The actions that appear at the end of a row.
      *
      * **Note:** This aggregation cannot be bound with a factory. If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable},
@@ -23018,6 +23425,7 @@ declare module "sap/ui/mdc/table/TableTypeBase" {
 
   /**
    * The table type info base class for the metadata-driven table. Base class with no implementation.
+   *
    *
    * @since 1.65
    */
@@ -23253,7 +23661,7 @@ declare module "sap/ui/mdc/util/PropertyHelper" {
     visible?: boolean;
     /**
      * Key of the group in which the property is located. Used to visually group properties in personalization
-     * dialogs.
+     * dialogs. The group with the `basic` key is always shown as the first group.
      */
     group?: string;
     /**
@@ -26485,6 +26893,19 @@ declare module "sap/ui/mdc/valuehelp/content/FixedList" {
      */
     getGroupable(): boolean;
     /**
+     * Gets current value of property {@link #getHighlightFilterResults highlightFilterResults}.
+     *
+     * If set to `true`, the filter is applied word by word, and matched text in the results is highlighted.
+     * If set to `false`, filtering takes the whole string into account, and nothing is highlighted.
+     *
+     * Default value is `false`.
+     *
+     * @since 1.150
+     *
+     * @returns Value of property `highlightFilterResults`
+     */
+    getHighlightFilterResults(): boolean;
+    /**
      * Gets content of aggregation {@link #getItems items}.
      *
      * Items of the value help.
@@ -26629,6 +27050,26 @@ declare module "sap/ui/mdc/valuehelp/content/FixedList" {
       bGroupable?: boolean
     ): this;
     /**
+     * Sets a new value for property {@link #getHighlightFilterResults highlightFilterResults}.
+     *
+     * If set to `true`, the filter is applied word by word, and matched text in the results is highlighted.
+     * If set to `false`, filtering takes the whole string into account, and nothing is highlighted.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `false`.
+     *
+     * @since 1.150
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setHighlightFilterResults(
+      /**
+       * New value for property `highlightFilterResults`
+       */
+      bHighlightFilterResults?: boolean
+    ): this;
+    /**
      * Sets a new value for property {@link #getRestrictedToFixedValues restrictedToFixedValues}.
      *
      * If set, the connected field must not allow other values than the items of the `FixedList`. Free text
@@ -26672,6 +27113,14 @@ declare module "sap/ui/mdc/valuehelp/content/FixedList" {
      * **Note: ** if `restrictedToFixedValues` is set, filtering should be disabled.
      */
     filterList?: boolean | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * If set to `true`, the filter is applied word by word, and matched text in the results is highlighted.
+     * If set to `false`, filtering takes the whole string into account, and nothing is highlighted.
+     *
+     * @since 1.150
+     */
+    highlightFilterResults?: boolean | PropertyBindingInfo | `{${string}}`;
 
     /**
      * If set, an item to clear the selection is added.
@@ -28130,9 +28579,13 @@ declare namespace sap {
 
     "sap/ui/mdc/LinkDelegate": undefined;
 
+    "sap/ui/mdc/mixin/ActionToolbarMixin": undefined;
+
     "sap/ui/mdc/mixin/AdaptationMixin": undefined;
 
     "sap/ui/mdc/mixin/DelegateMixin": undefined;
+
+    "sap/ui/mdc/mixin/DynamicPropertiesMixin": undefined;
 
     "sap/ui/mdc/mixin/FilterIntegrationMixin": undefined;
 

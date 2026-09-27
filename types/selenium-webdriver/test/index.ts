@@ -513,7 +513,21 @@ function TestWebElement() {
     element = element.findElement({ id: "ABC" });
     element.findElements({ className: "ABC" }).then((elements: webdriver.WebElement[]) => {});
 
-    stringPromise = element.getAttribute("class");
+    const maybeAttr: Promise<string | null> = element.getAttribute("class");
+    maybeAttr.then(v => {
+        if (v !== null) {
+            v.toUpperCase();
+        }
+    });
+    const maybeDomAttr: Promise<string | null> = element.getDomAttribute("class");
+    maybeDomAttr.then(v => {
+        if (v !== null) {
+            v.toUpperCase();
+        }
+    });
+    stringPromise = element.getProperty("value");
+    stringPromise = element.getAriaRole();
+    stringPromise = element.getAccessibleName();
     stringPromise = element.getCssValue("display");
     driver = element.getDriver();
     element.getLocation().then((location: webdriver.ILocation) => {});

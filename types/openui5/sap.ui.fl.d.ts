@@ -1,9 +1,13 @@
-// For Library Version: 1.145.0
+// For Library Version: 1.152.0
 
 declare module "sap/ui/fl/library" {}
 
 declare module "sap/ui/fl/apply/api/ControlVariantApplyAPI" {
   import ManagedObject from "sap/ui/base/ManagedObject";
+
+  import VariantManagement from "sap/ui/fl/variants/VariantManagement";
+
+  import Control from "sap/ui/core/Control";
 
   /**
    * Provides an API for applications to work with control variants. See also {@link sap.ui.fl.variants.VariantManagement}.
@@ -74,20 +78,23 @@ declare module "sap/ui/fl/apply/api/ControlVariantApplyAPI" {
      * Clears URL technical parameter `sap-ui-fl-control-variant-id` for control variants. Use this method in
      * case you normally want the variant parameter in the URL, but have a few special navigation patterns where
      * you want to clear it. If you don't want that parameter in general, set the `updateVariantInURL` parameter
-     * on your variant management control to `false`. SAP Fiori elements use this method. If a variant management
-     * control is given as a parameter, only parameters specific to that control are cleared.
+     * on your variant management control to `false`. SAP Fiori elements use this method.
+     *
+     *
+     * @returns Resolves once the URL parameter has been cleared
      */
     clearVariantParameterInURL(
       /**
        * Object with parameters as properties
        */
-      mPropertyBag: {
+      mPropertyBag?: {
         /**
-         * Variant management control for which the URL technical parameter has to be cleared
+         * Variant management control whose variant ids should be removed from the URL parameter. If omitted, all
+         * variant ids are removed.
          */
-        control: ManagedObject;
+        control?: VariantManagement;
       }
-    ): void;
+    ): Promise<void>;
     /**
      * Removes the saved callback for the given control and variant management control.
      */
@@ -106,6 +113,28 @@ declare module "sap/ui/fl/apply/api/ControlVariantApplyAPI" {
         vmControlId: string;
       }
     ): void;
+    /**
+     * Returns the current variant reference for a given variant management reference and control.
+     *
+     * @since 1.148
+     *
+     * @returns Current variant reference
+     */
+    getCurrentVariantReference(
+      /**
+       * Object with parameters as properties
+       */
+      mPropertyBag: {
+        /**
+         * Variant management reference
+         */
+        vmReference: string;
+        /**
+         * Control for the reference determination
+         */
+        control: Control;
+      }
+    ): string;
   }
   const ControlVariantApplyAPI: ControlVariantApplyAPI;
   export default ControlVariantApplyAPI;
@@ -1439,8 +1468,7 @@ declare module "sap/ui/fl/write/_internal/fieldExtensibility/MultiTenantABAPExte
    *
    * @since 1.87
    */
-  interface MultiTenantABAPExtensibilityVariant
-    extends ABAPExtensibilityVariant {
+  interface MultiTenantABAPExtensibilityVariant extends ABAPExtensibilityVariant {
     /**
      * Creates a new subclass of class sap.ui.fl.write._internal.fieldExtensibility.MultiTenantABAPExtensibilityVariant
      * with name `sClassName` and enriches it with the information contained in `oClassInfo`.
@@ -1544,6 +1572,8 @@ declare namespace sap {
     "sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard": undefined;
 
     "sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard": undefined;
+
+    "sap/ui/fl/apply/_internal/changes/descriptor/platform/SetUI5VersionNumber": undefined;
 
     "sap/ui/fl/apply/_internal/changes/descriptor/Registration": undefined;
 
@@ -1661,6 +1691,8 @@ declare namespace sap {
 
     "sap/ui/fl/initial/_internal/connectors/Utils": undefined;
 
+    "sap/ui/fl/initial/_internal/FlexConfiguration": undefined;
+
     "sap/ui/fl/initial/_internal/preprocessors/ComponentLifecycleHooks": undefined;
 
     "sap/ui/fl/initial/_internal/preprocessors/ControllerExtension": undefined;
@@ -1735,6 +1767,8 @@ declare namespace sap {
 
     "sap/ui/fl/write/_internal/connectors/SessionStorageConnector": undefined;
 
+    "sap/ui/fl/write/_internal/connectors/SupportLocalStorageConnector": undefined;
+
     "sap/ui/fl/write/_internal/connectors/Utils": undefined;
 
     "sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant": undefined;
@@ -1766,6 +1800,8 @@ declare namespace sap {
     "sap/ui/fl/write/api/ContextSharingAPI": undefined;
 
     "sap/ui/fl/write/api/ControlPersonalizationWriteAPI": undefined;
+
+    "sap/ui/fl/write/api/ControlVariantWriteAPI": undefined;
 
     "sap/ui/fl/write/api/FeaturesAPI": undefined;
 

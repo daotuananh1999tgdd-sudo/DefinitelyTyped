@@ -1,4 +1,4 @@
-// For Library Version: 1.145.0
+// For Library Version: 1.152.0
 
 declare module "sap/f/library" {
   export interface IShellBar {
@@ -827,7 +827,6 @@ declare module "sap/m/library" {
    * This enum is part of the 'sap/m/library' module export and must be accessed by the property 'ContentConfigType'.
    *
    * @since 1.122
-   * @experimental As of version 1.122.
    */
   export enum ContentConfigType {
     /**
@@ -1400,7 +1399,7 @@ declare module "sap/m/library" {
      *
      * Generic Tile renders buttons that are specified under 'actionButtons' aggregation
      *
-     * @experimental As of version 1.96.
+     * @since 1.96.0
      */
     ActionMode = "ActionMode",
     /**
@@ -1408,7 +1407,7 @@ declare module "sap/m/library" {
      *
      * Enables Article Mode.
      *
-     * @experimental As of version 1.96.
+     * @since 1.96.0
      */
     ArticleMode = "ArticleMode",
     /**
@@ -1427,7 +1426,6 @@ declare module "sap/m/library" {
      * It is applicable only for the OneByOne FrameType and TwoByHalf FrameType.
      *
      * @since 1.96
-     * @experimental As of version 1.96.
      */
     IconMode = "IconMode",
     /**
@@ -1601,7 +1599,7 @@ declare module "sap/m/library" {
    *
    * This enum is part of the 'sap/m/library' module export and must be accessed by the property 'IconTabFilterInteractionMode'.
    *
-   * @experimental As of version 1.121. Behavior might change.
+   * @experimental As of version 1.121.
    */
   export enum IconTabFilterInteractionMode {
     /**
@@ -1658,8 +1656,6 @@ declare module "sap/m/library" {
      * feature works under the Browser's Cross-Origin Resource Sharing (CORS) policy. This means that a web
      * application using those APIs can only request resources from the same origin the application was loaded
      * from unless the response from other origins includes the right CORS headers.
-     *
-     * @experimental As of version 1.106.
      */
     InlineSvg = "InlineSvg",
   }
@@ -2267,7 +2263,8 @@ declare module "sap/m/library" {
      */
     Active = "Active",
     /**
-     * Enables detail button of the list item that fires `detailPress` event. Also see {@link sap.m.ListItemBase#attachDetailPress}.
+     * Enables the detail button of the list item that fires the {@link sap.m.ListItemBase#event:detailPress detailPress }
+     * event.
      */
     Detail = "Detail",
     /**
@@ -2280,7 +2277,8 @@ declare module "sap/m/library" {
      */
     Inactive = "Inactive",
     /**
-     * Indicates the list item is navigable to show extra information about the item.
+     * Enables the navigation button of the list item to navigate and display additional information about the
+     * item. Fires the {@link sap.m.ListBase#event:itemPress} event when pressed.
      */
     Navigation = "Navigation",
   }
@@ -2586,70 +2584,158 @@ declare module "sap/m/library" {
     Overflow = "Overflow",
   }
   /**
-   * undefined
+   * Operations for conditions used in the personalization condition panel.
    *
    * This enum is part of the 'sap/m/library' module export and must be accessed by the property 'P13nConditionOperation'.
    */
   export enum P13nConditionOperation {
+    /**
+     * "ascending" operation: sorts values in ascending order.
+     */
     Ascending = "Ascending",
-
+    /**
+     * "average" operation: calculates the average of values.
+     */
     Average = "Average",
-
+    /**
+     * "between" operation: filters for values between two given operands.
+     */
     BT = "BT",
-
+    /**
+     * "contains" operation: filters for values that contain the given substring.
+     */
     Contains = "Contains",
-
+    /**
+     * "default values" operation: applies default values for the condition.
+     *
+     * @since 1.148
+     */
+    DefaultValues = "DefaultValues",
+    /**
+     * "descending" operation: sorts values in descending order.
+     */
     Descending = "Descending",
-
+    /**
+     * "empty" operation: filters for entries whose value is empty.
+     */
     Empty = "Empty",
-
+    /**
+     * "ends with" operation: filters for values that end with the given string.
+     */
     EndsWith = "EndsWith",
-
+    /**
+     * "equal to" operation: filters for values equal to the given operand.
+     */
     EQ = "EQ",
-
+    /**
+     * "greater than or equal to" operation: filters for values greater than or equal to the given operand.
+     */
     GE = "GE",
-
+    /**
+     * "group ascending" operation: groups values in ascending order.
+     */
     GroupAscending = "GroupAscending",
-
+    /**
+     * "group descending" operation: groups values in descending order.
+     */
     GroupDescending = "GroupDescending",
-
+    /**
+     * "greater than" operation: filters for values greater than the given operand.
+     */
     GT = "GT",
-
+    /**
+     * "initial" operation: filters for entries whose value has not been changed from its initial state.
+     */
     Initial = "Initial",
-
+    /**
+     * "less than or equal to" operation: filters for values less than or equal to the given operand.
+     */
     LE = "LE",
-
+    /**
+     * "less than" operation: filters for values less than the given operand.
+     */
     LT = "LT",
-
+    /**
+     * "maximum" operation: determines the maximum value.
+     */
     Maximum = "Maximum",
-
+    /**
+     * "minimum" operation: determines the minimum value.
+     */
     Minimum = "Minimum",
-
+    /**
+     * "not between" operation: excludes values between two given operands.
+     */
     NotBT = "NotBT",
-
+    /**
+     * "does not contain" operation: excludes values that contain the given substring.
+     */
     NotContains = "NotContains",
-
+    /**
+     * "not empty" operation: excludes entries whose value is empty.
+     */
     NotEmpty = "NotEmpty",
-
+    /**
+     * "does not end with" operation: excludes values that end with the given string.
+     */
     NotEndsWith = "NotEndsWith",
-
+    /**
+     * "not equal to" operation: excludes values equal to the given operand.
+     */
     NotEQ = "NotEQ",
-
+    /**
+     * "not greater than or equal to" operation: excludes values greater than or equal to the given operand.
+     */
     NotGE = "NotGE",
-
+    /**
+     * "not greater than" operation: excludes values greater than the given operand.
+     */
     NotGT = "NotGT",
-
+    /**
+     * "not initial" operation: excludes entries whose value has not been changed from its initial state.
+     */
     NotInitial = "NotInitial",
-
+    /**
+     * "not less than or equal to" operation: excludes values less than or equal to the given operand.
+     */
     NotLE = "NotLE",
-
+    /**
+     * "not less than" operation: excludes values less than the given operand.
+     */
     NotLT = "NotLT",
-
+    /**
+     * "does not start with" operation: excludes values that start with the given string.
+     */
     NotStartsWith = "NotStartsWith",
-
+    /**
+     * "starts with" operation: filters for values that start with the given string.
+     */
     StartsWith = "StartsWith",
-
+    /**
+     * "total" operation: calculates the total of values.
+     */
     Total = "Total",
+  }
+  /**
+   * Type of a condition operation in the personalization condition panel.
+   *
+   * This enum is part of the 'sap/m/library' module export and must be accessed by the property 'P13nConditionOperationType'.
+   */
+  export enum P13nConditionOperationType {
+    /**
+     * Default values for the condition.
+     *
+     * @since 1.148
+     */
+    DefaultValues = "DefaultValues",
+    /**
+     * Values that should be excluded from the result.
+     */
+    Exclude = "Exclude",
+    /**
+     * Values that should be included in the result.
+     */
+    Include = "Include",
   }
   /**
    * Type of panels used in the personalization dialog.
@@ -2737,6 +2823,29 @@ declare module "sap/m/library" {
      * page summary or table of contents.
      */
     Region = "Region",
+  }
+  /**
+   * Available Panel Background Design.
+   *
+   * This enum is part of the 'sap/m/library' module export and must be accessed by the property 'PanelBackgroundDesign'.
+   */
+  export enum PanelBackgroundDesign {
+    /**
+     * Contrasting background for a better visual grouping when a panel is placed inside a container
+     */
+    Contrast = "Contrast",
+    /**
+     * A solid background color dependent on the theme.
+     */
+    Solid = "Solid",
+    /**
+     * A translucent background depending on the opacity value of the theme.
+     */
+    Translucent = "Translucent",
+    /**
+     * Transparent background.
+     */
+    Transparent = "Transparent",
   }
   /**
    * PDF viewer display types.
@@ -5074,7 +5183,11 @@ declare module "sap/m/ActionSheet" {
    *
    * When an action is triggered, the action sheet closes and you can display a confirmation as a {@link sap.m.MessageToast message toast}.
    *
+   * **Note**: As of version 1.149, the control is deprecated. Use {@link sap.m.Menu} / {@link sap.m.MenuItem }
+   * instead.
+   *
    * @since 1.9.1
+   * @deprecated As of version 1.149. use sap.m.Menu / sap.m.MenuItem instead.
    */
   export default class ActionSheet extends Control {
     /**
@@ -5871,6 +5984,8 @@ declare module "sap/m/ActionSheet" {
   }
   /**
    * Describes the settings that can be provided to the ActionSheet constructor.
+   *
+   * @deprecated As of version 1.149. use sap.m.Menu / sap.m.MenuItem instead.
    */
   export interface $ActionSheetSettings extends $ControlSettings {
     /**
@@ -7284,7 +7399,14 @@ declare module "sap/m/App" {
 declare module "sap/m/Avatar" {
   import { default as Control, $ControlSettings } from "sap/ui/core/Control";
 
-  import { ID, aria, URI, ValueState, CSSSize } from "sap/ui/core/library";
+  import {
+    IFormContent,
+    ID,
+    aria,
+    URI,
+    ValueState,
+    CSSSize,
+  } from "sap/ui/core/library";
 
   import Event from "sap/ui/base/Event";
 
@@ -7331,7 +7453,8 @@ declare module "sap/m/Avatar" {
    *
    * @since 1.73
    */
-  export default class Avatar extends Control {
+  export default class Avatar extends Control implements IFormContent {
+    __implements__sap_ui_core_IFormContent: boolean;
     /**
      * Constructor for a new `Avatar`.
      *
@@ -7741,6 +7864,17 @@ declare module "sap/m/Avatar" {
      * @returns Value of property `fallbackIcon`
      */
     getFallbackIcon(): string;
+    /**
+     * Implements {@link sap.ui.core.IFormContent} interface.
+     *
+     * Prevents the Form layout from stretching the `Avatar` to full width, preserving its predefined fixed
+     * sizes.
+     *
+     * @ui5-protected Do not call from applications (only from related classes in the framework)
+     *
+     * @returns `true`
+     */
+    getFormDoNotAdjustWidth(): boolean;
     /**
      * Gets current value of property {@link #getImageFitType imageFitType}.
      *
@@ -12154,6 +12288,8 @@ declare module "sap/m/Carousel" {
    *     the navigation arrows.
    * 	 - On desktop, navigation is done with the navigation arrows.
    * 	 - The paging indicator (when activated) is visible on each form factor.
+   * 	 - When using {@link sap.m.CarouselLayout CarouselLayout} with the `responsive` property set to `true`,
+   *     the number of visible pages adjusts automatically based on the available width and the specified `minPageWidth`.
    */
   export default class Carousel extends Control {
     /**
@@ -13384,6 +13520,41 @@ declare module "sap/m/CarouselLayout" {
      */
     static getMetadata(): ManagedObjectMetadata;
     /**
+     * Gets current value of property {@link #getMinPageWidth minPageWidth}.
+     *
+     * Defines the minimum width, in pixels, for each page to be displayed in the `Carousel` control.
+     *
+     * This property is used as a constraint when `responsive` mode is enabled, ensuring that pages are never
+     * rendered smaller than this specified width. The carousel automatically calculates the number of pages
+     * that can fit within the available viewport while respecting the specified minimum width requirement.
+     *
+     * **Note:** This property is only effective when the `responsive` property is set to `true`.
+     *
+     * Default value is `148`.
+     *
+     *
+     * @returns Value of property `minPageWidth`
+     */
+    getMinPageWidth(): int;
+    /**
+     * Gets current value of property {@link #getResponsive responsive}.
+     *
+     * Activates the responsive layout mode, where the number of visible carousel pages automatically adjusts
+     * based on the available width and the specified page width.
+     *
+     * When this option is enabled, the carousel dynamically calculates and displays as many items as can fit
+     * within the viewport while adhering to the `minPageWidth` constraint.
+     *
+     * **Note:** Enabling this option overrides the `visiblePagesCount` property and disables the `loop` functionality
+     * of the carousel.
+     *
+     * Default value is `false`.
+     *
+     *
+     * @returns Value of property `responsive`
+     */
+    getResponsive(): boolean;
+    /**
      * Gets current value of property {@link #getScrollMode scrollMode}.
      *
      * Defines how the items will be scrolled through in `Carousel` control. One at a time or depending on the
@@ -13405,8 +13576,10 @@ declare module "sap/m/CarouselLayout" {
      * Defines how many pages are displayed in the visible area of the `Carousel` control. Value should be a
      * positive number.
      *
-     * **Note:** When this property is set to something different than the default value, the `loop` property
+     * **Note:** When this property is set to something different from the default value, the `loop` property
      * of `Carousel` is ignored.
+     *
+     * **Note:** This property is ignored when the `responsive` property is set to `true`.
      *
      * Default value is `1`.
      *
@@ -13414,6 +13587,55 @@ declare module "sap/m/CarouselLayout" {
      * @returns Value of property `visiblePagesCount`
      */
     getVisiblePagesCount(): int;
+    /**
+     * Sets a new value for property {@link #getMinPageWidth minPageWidth}.
+     *
+     * Defines the minimum width, in pixels, for each page to be displayed in the `Carousel` control.
+     *
+     * This property is used as a constraint when `responsive` mode is enabled, ensuring that pages are never
+     * rendered smaller than this specified width. The carousel automatically calculates the number of pages
+     * that can fit within the available viewport while respecting the specified minimum width requirement.
+     *
+     * **Note:** This property is only effective when the `responsive` property is set to `true`.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `148`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setMinPageWidth(
+      /**
+       * New value for property `minPageWidth`
+       */
+      iMinPageWidth?: int
+    ): this;
+    /**
+     * Sets a new value for property {@link #getResponsive responsive}.
+     *
+     * Activates the responsive layout mode, where the number of visible carousel pages automatically adjusts
+     * based on the available width and the specified page width.
+     *
+     * When this option is enabled, the carousel dynamically calculates and displays as many items as can fit
+     * within the viewport while adhering to the `minPageWidth` constraint.
+     *
+     * **Note:** Enabling this option overrides the `visiblePagesCount` property and disables the `loop` functionality
+     * of the carousel.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `false`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setResponsive(
+      /**
+       * New value for property `responsive`
+       */
+      bResponsive?: boolean
+    ): this;
     /**
      * Sets a new value for property {@link #getScrollMode scrollMode}.
      *
@@ -13443,8 +13665,10 @@ declare module "sap/m/CarouselLayout" {
      * Defines how many pages are displayed in the visible area of the `Carousel` control. Value should be a
      * positive number.
      *
-     * **Note:** When this property is set to something different than the default value, the `loop` property
+     * **Note:** When this property is set to something different from the default value, the `loop` property
      * of `Carousel` is ignored.
+     *
+     * **Note:** This property is ignored when the `responsive` property is set to `true`.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -13468,8 +13692,10 @@ declare module "sap/m/CarouselLayout" {
      * Defines how many pages are displayed in the visible area of the `Carousel` control. Value should be a
      * positive number.
      *
-     * **Note:** When this property is set to something different than the default value, the `loop` property
+     * **Note:** When this property is set to something different from the default value, the `loop` property
      * of `Carousel` is ignored.
+     *
+     * **Note:** This property is ignored when the `responsive` property is set to `true`.
      */
     visiblePagesCount?: int | PropertyBindingInfo | `{${string}}`;
 
@@ -13486,6 +13712,29 @@ declare module "sap/m/CarouselLayout" {
       | (CarouselScrollMode | keyof typeof CarouselScrollMode)
       | PropertyBindingInfo
       | `{${string}}`;
+
+    /**
+     * Activates the responsive layout mode, where the number of visible carousel pages automatically adjusts
+     * based on the available width and the specified page width.
+     *
+     * When this option is enabled, the carousel dynamically calculates and displays as many items as can fit
+     * within the viewport while adhering to the `minPageWidth` constraint.
+     *
+     * **Note:** Enabling this option overrides the `visiblePagesCount` property and disables the `loop` functionality
+     * of the carousel.
+     */
+    responsive?: boolean | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Defines the minimum width, in pixels, for each page to be displayed in the `Carousel` control.
+     *
+     * This property is used as a constraint when `responsive` mode is enabled, ensuring that pages are never
+     * rendered smaller than this specified width. The carousel automatically calculates the number of pages
+     * that can fit within the available viewport while respecting the specified minimum width requirement.
+     *
+     * **Note:** This property is only effective when the `responsive` property is set to `true`.
+     */
+    minPageWidth?: int | PropertyBindingInfo | `{${string}}`;
   }
 }
 
@@ -17456,8 +17705,7 @@ declare module "sap/m/ComboBox" {
   /**
    * Parameters of the ComboBox#change event.
    */
-  export interface ComboBox$ChangeEventParameters
-    extends InputBase$ChangeEventParameters {
+  export interface ComboBox$ChangeEventParameters extends InputBase$ChangeEventParameters {
     /**
      * Indicates whether the change event was caused by selecting an item in the list
      */
@@ -17511,6 +17759,8 @@ declare module "sap/m/ComboBoxBase" {
   import Dialog from "sap/m/Dialog";
 
   import List from "sap/m/List";
+
+  import { CSSSize } from "sap/ui/core/library";
 
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
@@ -17846,6 +18096,19 @@ declare module "sap/m/ComboBoxBase" {
      */
     getList(): List | null;
     /**
+     * Gets current value of property {@link #getMaxPickerHeight maxPickerHeight}.
+     *
+     * Defines the maximum height of the picker popup. When the available items exceed this height, vertical
+     * scrolling is enabled. This property only applies to the picker popup on desktop and tablet devices.
+     *
+     * **Note:** On phones, the suggestions are displayed in a fullscreen dialog, so this property has no effect.
+     *
+     * @since 1.150
+     *
+     * @returns Value of property `maxPickerHeight`
+     */
+    getMaxPickerHeight(): CSSSize;
+    /**
      * Gets the control's picker popup.
      *
      * @ui5-protected Do not call from applications (only from related classes in the framework)
@@ -18081,6 +18344,26 @@ declare module "sap/m/ComboBoxBase" {
       fnFilter?: (p1?: string, p2?: Item) => boolean
     ): this;
     /**
+     * Sets a new value for property {@link #getMaxPickerHeight maxPickerHeight}.
+     *
+     * Defines the maximum height of the picker popup. When the available items exceed this height, vertical
+     * scrolling is enabled. This property only applies to the picker popup on desktop and tablet devices.
+     *
+     * **Note:** On phones, the suggestions are displayed in a fullscreen dialog, so this property has no effect.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * @since 1.150
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setMaxPickerHeight(
+      /**
+       * New value for property `maxPickerHeight`
+       */
+      sMaxPickerHeight?: CSSSize
+    ): this;
+    /**
      * Sets the property `_sPickerType`.
      *
      * @ui5-protected Do not call from applications (only from related classes in the framework)
@@ -18222,6 +18505,16 @@ declare module "sap/m/ComboBoxBase" {
      * @since 1.96
      */
     showClearIcon?: boolean | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Defines the maximum height of the picker popup. When the available items exceed this height, vertical
+     * scrolling is enabled. This property only applies to the picker popup on desktop and tablet devices.
+     *
+     * **Note:** On phones, the suggestions are displayed in a fullscreen dialog, so this property has no effect.
+     *
+     * @since 1.150
+     */
+    maxPickerHeight?: CSSSize | PropertyBindingInfo | `{${string}}`;
 
     /**
      * Defines the items contained within this control. **Note:** Disabled items are not visualized in the list
@@ -18464,7 +18757,6 @@ declare module "sap/m/ContentConfig" {
    * This element is used within the TileAttribute control that generates either a link or text
    *
    * @since 1.122
-   * @experimental As of version 1.122.
    */
   export default class ContentConfig extends UI5Element {
     /**
@@ -18660,8 +18952,6 @@ declare module "sap/m/ContentConfig" {
   }
   /**
    * Describes the settings that can be provided to the ContentConfig constructor.
-   *
-   * @experimental As of version 1.122.
    */
   export interface $ContentConfigSettings extends $ElementSettings {
     /**
@@ -20386,8 +20676,7 @@ declare module "sap/m/DatePicker" {
   /**
    * Parameters of the DatePicker#change event.
    */
-  export interface DatePicker$ChangeEventParameters
-    extends InputBase$ChangeEventParameters {
+  export interface DatePicker$ChangeEventParameters extends InputBase$ChangeEventParameters {
     /**
      * Indicator for a valid date.
      */
@@ -20895,8 +21184,7 @@ declare module "sap/m/DateRangeSelection" {
   /**
    * Parameters of the DateRangeSelection#change event.
    */
-  export interface DateRangeSelection$ChangeEventParameters
-    extends DatePicker$ChangeEventParameters {
+  export interface DateRangeSelection$ChangeEventParameters extends DatePicker$ChangeEventParameters {
     /**
      * Current start date after change.
      */
@@ -23368,6 +23656,28 @@ declare module "sap/m/Dialog" {
      */
     getRightButton(): ID | null;
     /**
+     * Gets current value of property {@link #getShowFullScreenButton showFullScreenButton}.
+     *
+     * Determines whether the fullscreen toggle functionality is enabled. When set to `true`, a fullscreen button
+     * is shown in the dialog header, the keyboard shortcut `Shift+Ctrl+F` toggles fullscreen, and double-clicking
+     * the header toggles fullscreen mode on desktop devices. When set to `false` (the default), none of the
+     * fullscreen features are active and double-click on the header repositions the dialog.
+     *
+     * **Note:** When set to `true`, the default double-click behavior (reposition dialog to center) is replaced
+     * by the fullscreen toggle.
+     *
+     * The fullscreen toggle directly changes the `stretch` property.
+     *
+     * **Note:** This property has no effect on phones or when a `customHeader` is used.
+     *
+     * Default value is `false`.
+     *
+     * @since 1.149
+     *
+     * @returns Value of property `showFullScreenButton`
+     */
+    getShowFullScreenButton(): boolean;
+    /**
      * Gets current value of property {@link #getShowHeader showHeader}.
      *
      * Determines whether the header is shown inside the Dialog. If this property is set to `false`, the `text`
@@ -23908,6 +24218,35 @@ declare module "sap/m/Dialog" {
       oRightButton: ID | Button
     ): this;
     /**
+     * Sets a new value for property {@link #getShowFullScreenButton showFullScreenButton}.
+     *
+     * Determines whether the fullscreen toggle functionality is enabled. When set to `true`, a fullscreen button
+     * is shown in the dialog header, the keyboard shortcut `Shift+Ctrl+F` toggles fullscreen, and double-clicking
+     * the header toggles fullscreen mode on desktop devices. When set to `false` (the default), none of the
+     * fullscreen features are active and double-click on the header repositions the dialog.
+     *
+     * **Note:** When set to `true`, the default double-click behavior (reposition dialog to center) is replaced
+     * by the fullscreen toggle.
+     *
+     * The fullscreen toggle directly changes the `stretch` property.
+     *
+     * **Note:** This property has no effect on phones or when a `customHeader` is used.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `false`.
+     *
+     * @since 1.149
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setShowFullScreenButton(
+      /**
+       * New value for property `showFullScreenButton`
+       */
+      bShowFullScreenButton?: boolean
+    ): this;
+    /**
      * Sets a new value for property {@link #getShowHeader showHeader}.
      *
      * Determines whether the header is shown inside the Dialog. If this property is set to `false`, the `text`
@@ -24253,6 +24592,23 @@ declare module "sap/m/Dialog" {
       | (TitleAlignment | keyof typeof TitleAlignment)
       | PropertyBindingInfo
       | `{${string}}`;
+
+    /**
+     * Determines whether the fullscreen toggle functionality is enabled. When set to `true`, a fullscreen button
+     * is shown in the dialog header, the keyboard shortcut `Shift+Ctrl+F` toggles fullscreen, and double-clicking
+     * the header toggles fullscreen mode on desktop devices. When set to `false` (the default), none of the
+     * fullscreen features are active and double-click on the header repositions the dialog.
+     *
+     * **Note:** When set to `true`, the default double-click behavior (reposition dialog to center) is replaced
+     * by the fullscreen toggle.
+     *
+     * The fullscreen toggle directly changes the `stretch` property.
+     *
+     * **Note:** This property has no effect on phones or when a `customHeader` is used.
+     *
+     * @since 1.149
+     */
+    showFullScreenButton?: boolean | PropertyBindingInfo | `{${string}}`;
 
     /**
      * The content inside the Dialog.
@@ -25207,6 +25563,21 @@ declare module "sap/m/DynamicDateOption" {
        */
       oControl: DynamicDateRange
     ): DynamicDateRangeValue;
+    /**
+     * Returns the format type used for the ValueHelp dialog footer "Selected" date label.
+     *
+     * Override this in custom options when the default date-only label is not sufficient. Return `datetime`
+     * to include the time portion.
+     *
+     *
+     * @returns `datetime` for date-and-time formatting, or `null` for date-only formatting (default).
+     */
+    getValueHelpUIFooterFormatTypes(
+      /**
+       * The control instance
+       */
+      oControl: DynamicDateRange
+    ): string | null;
     /**
      * Defines the UI types of the option. They are used to create predefined UI for the DynamicDateRange's
      * value help dialog corresponding to this option. The types are DynamicDateValueHelpUIType instances. Their
@@ -26770,8 +27141,7 @@ declare module "sap/m/DynamicDateValueHelpUIType" {
   /**
    * Describes the settings that can be provided to the DynamicDateValueHelpUIType constructor.
    */
-  export interface $DynamicDateValueHelpUITypeSettings
-    extends $ElementSettings {
+  export interface $DynamicDateValueHelpUITypeSettings extends $ElementSettings {
     /**
      * One of the predefined types - "date", "daterange", "month", "int". They determine controls - calendar
      * or input.
@@ -30330,7 +30700,7 @@ declare module "sap/m/FeedListItem" {
    * 1.23 the new feature expand / collapse was introduced, which uses the property maxCharacters. Beginning
    * with release 1.44, sap.m.FormattedText was introduced which allows html formatted text to be displayed.
    * The `actions` aggregation must contain instances of {@link sap.m.FeedListItemAction} in order to display
-   * them in the action sheet.
+   * them in a menu.
    *
    * @since 1.12
    */
@@ -31555,8 +31925,7 @@ declare module "sap/m/FeedListItemAction" {
   /**
    * Describes the settings that can be provided to the FeedListItemAction constructor.
    */
-  export interface $FeedListItemActionSettings
-    extends $ListItemActionBaseSettings {
+  export interface $FeedListItemActionSettings extends $ListItemActionBaseSettings {
     /**
      * The key of the item.
      */
@@ -32977,6 +33346,7 @@ declare module "sap/m/FormattedText" {
      * 	 - `strong`
      * 	 - `span`
      * 	 - `u`
+     * 	 - `s`
      * 	 - `dl`
      * 	 - `dt`
      * 	 - `dd`
@@ -33262,6 +33632,7 @@ declare module "sap/m/FormattedText" {
      * 	 - `strong`
      * 	 - `span`
      * 	 - `u`
+     * 	 - `s`
      * 	 - `dl`
      * 	 - `dt`
      * 	 - `dd`
@@ -38295,8 +38666,7 @@ declare module "sap/m/IconTabFilter" {
      *
      * Default value is `Auto`.
      *
-     * @experimental As of version 1.121. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
+     * @experimental As of version 1.121.
      *
      * @returns Value of property `interactionMode`
      */
@@ -38599,8 +38969,7 @@ declare module "sap/m/IconTabFilter" {
      *
      * Default value is `Auto`.
      *
-     * @experimental As of version 1.121. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
+     * @experimental As of version 1.121.
      *
      * @returns Reference to `this` in order to allow method chaining
      */
@@ -38711,8 +39080,7 @@ declare module "sap/m/IconTabFilter" {
     /**
      * Specifies the interaction mode.
      *
-     * @experimental As of version 1.121. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
+     * @experimental As of version 1.121.
      */
     interactionMode?:
       | (
@@ -51990,7 +52358,7 @@ declare module "sap/m/ListBase" {
     /**
      * Gets current value of property {@link #getItemActionCount itemActionCount}.
      *
-     * Defines the maximum number of item actions.
+     * Defines the maximum number of {@link sap.m.ListItemBase#getActions actions} displayed for the items.
      *
      * If the number of item actions exceeds the `itemActionCount` property value, an overflow button will appear,
      * providing access to the additional actions.
@@ -51998,6 +52366,8 @@ declare module "sap/m/ListBase" {
      * **Note:** Only values between `0-2` enables the use of the new `actions` aggregation. When enabled, the
      * {@link sap.m.ListMode Delete} mode and the {@link sap.m.ListType Detail} list item type have no effect.
      * Instead, dedicated actions of {@link sap.m.ListItemActionType type} `Delete` or `Edit` should be used.
+     *  **Note:** As of version 1.147, items with type {@link sap.m.ListType Navigation} render the navigation
+     * indicator as an action, which is not counted in `itemActionCount`.
      *
      * Default value is `-1`.
      *
@@ -52669,7 +53039,7 @@ declare module "sap/m/ListBase" {
     /**
      * Sets a new value for property {@link #getItemActionCount itemActionCount}.
      *
-     * Defines the maximum number of item actions.
+     * Defines the maximum number of {@link sap.m.ListItemBase#getActions actions} displayed for the items.
      *
      * If the number of item actions exceeds the `itemActionCount` property value, an overflow button will appear,
      * providing access to the additional actions.
@@ -52677,6 +53047,8 @@ declare module "sap/m/ListBase" {
      * **Note:** Only values between `0-2` enables the use of the new `actions` aggregation. When enabled, the
      * {@link sap.m.ListMode Delete} mode and the {@link sap.m.ListType Detail} list item type have no effect.
      * Instead, dedicated actions of {@link sap.m.ListItemActionType type} `Delete` or `Edit` should be used.
+     *  **Note:** As of version 1.147, items with type {@link sap.m.ListType Navigation} render the navigation
+     * indicator as an action, which is not counted in `itemActionCount`.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -53261,7 +53633,7 @@ declare module "sap/m/ListBase" {
       | `{${string}}`;
 
     /**
-     * Defines the maximum number of item actions.
+     * Defines the maximum number of {@link sap.m.ListItemBase#getActions actions} displayed for the items.
      *
      * If the number of item actions exceeds the `itemActionCount` property value, an overflow button will appear,
      * providing access to the additional actions.
@@ -53269,6 +53641,8 @@ declare module "sap/m/ListBase" {
      * **Note:** Only values between `0-2` enables the use of the new `actions` aggregation. When enabled, the
      * {@link sap.m.ListMode Delete} mode and the {@link sap.m.ListType Detail} list item type have no effect.
      * Instead, dedicated actions of {@link sap.m.ListItemActionType type} `Delete` or `Edit` should be used.
+     *  **Note:** As of version 1.147, items with type {@link sap.m.ListType Navigation} render the navigation
+     * indicator as an action, which is not counted in `itemActionCount`.
      *
      * @since 1.137
      */
@@ -55976,6 +56350,55 @@ declare module "sap/m/Menu" {
       oListener?: object
     ): this;
     /**
+     * Attaches event handler `fnFunction` to the {@link #event:open open} event of this `sap.m.Menu`.
+     *
+     * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
+     * otherwise it will be bound to this `sap.m.Menu` itself.
+     *
+     * Fired when the menu is opened.
+     *
+     * @since 1.146
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    attachOpen(
+      /**
+       * An application-specific payload object that will be passed to the event handler along with the event
+       * object when firing the event
+       */
+      oData: object,
+      /**
+       * The function to be called when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object to call the event handler with. Defaults to this `sap.m.Menu` itself
+       */
+      oListener?: object
+    ): this;
+    /**
+     * Attaches event handler `fnFunction` to the {@link #event:open open} event of this `sap.m.Menu`.
+     *
+     * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
+     * otherwise it will be bound to this `sap.m.Menu` itself.
+     *
+     * Fired when the menu is opened.
+     *
+     * @since 1.146
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    attachOpen(
+      /**
+       * The function to be called when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object to call the event handler with. Defaults to this `sap.m.Menu` itself
+       */
+      oListener?: object
+    ): this;
+    /**
      * Binds aggregation {@link #getItems items} to model data.
      *
      * See {@link sap.ui.base.ManagedObject#bindAggregation ManagedObject.bindAggregation} for a detailed description
@@ -56065,6 +56488,25 @@ declare module "sap/m/Menu" {
       oListener?: object
     ): this;
     /**
+     * Detaches event handler `fnFunction` from the {@link #event:open open} event of this `sap.m.Menu`.
+     *
+     * The passed function and listener object must match the ones used for event registration.
+     *
+     * @since 1.146
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    detachOpen(
+      /**
+       * The function to be called, when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object on which the given function had to be called
+       */
+      oListener?: object
+    ): this;
+    /**
      * Fires event {@link #event:beforeClose beforeClose} to attached listeners.
      *
      * Listeners may prevent the default action of this event by calling the `preventDefault` method on the
@@ -56106,6 +56548,20 @@ declare module "sap/m/Menu" {
        * Parameters to pass along with the event
        */
       mParameters?: Menu$ItemSelectedEventParameters
+    ): this;
+    /**
+     * Fires event {@link #event:open open} to attached listeners.
+     *
+     * @since 1.146
+     * @ui5-protected Do not call from applications (only from related classes in the framework)
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    fireOpen(
+      /**
+       * Parameters to pass along with the event
+       */
+      mParameters?: object
     ): this;
     /**
      * Gets content of aggregation {@link #getItems items}.
@@ -56266,6 +56722,13 @@ declare module "sap/m/Menu" {
     closed?: (oEvent: Event) => void;
 
     /**
+     * Fired when the menu is opened.
+     *
+     * @since 1.146
+     */
+    open?: (oEvent: Event) => void;
+
+    /**
      * Fired before the menu is closed. This event can be prevented which effectively prevents the menu from
      * closing.
      *
@@ -56319,18 +56782,34 @@ declare module "sap/m/Menu" {
     Menu$ItemSelectedEventParameters,
     Menu
   >;
+
+  /**
+   * Parameters of the Menu#open event.
+   */
+  export interface Menu$OpenEventParameters {}
+
+  /**
+   * Event object of the Menu#open event.
+   */
+  export type Menu$OpenEvent = Event<Menu$OpenEventParameters, Menu>;
 }
 
 declare module "sap/m/MenuButton" {
   import { default as Control, $ControlSettings } from "sap/ui/core/Control";
 
   import {
+    IFormContent,
+    ID,
+    URI,
+    TextDirection,
+    CSSSize,
+  } from "sap/ui/core/library";
+
+  import {
     IToolbarInteractiveControl,
     MenuButtonMode,
     ButtonType,
   } from "sap/m/library";
-
-  import { ID, URI, TextDirection, CSSSize } from "sap/ui/core/library";
 
   import Event from "sap/ui/base/Event";
 
@@ -56349,8 +56828,9 @@ declare module "sap/m/MenuButton" {
    */
   export default class MenuButton
     extends Control
-    implements IToolbarInteractiveControl
+    implements IFormContent, IToolbarInteractiveControl
   {
+    __implements__sap_ui_core_IFormContent: boolean;
     __implements__sap_m_IToolbarInteractiveControl: boolean;
     /**
      * Constructor for a new MenuButton.
@@ -56660,6 +57140,16 @@ declare module "sap/m/MenuButton" {
      * @returns Value of property `enabled`
      */
     getEnabled(): boolean;
+    /**
+     * Implements {@link sap.ui.core.IFormContent} interface.
+     *
+     * `MenuButton` must not be stretched by the Form layout because it should keep its natural width.
+     *
+     * @ui5-protected Do not call from applications (only from related classes in the framework)
+     *
+     * @returns `true`
+     */
+    getFormDoNotAdjustWidth(): boolean;
     /**
      * Gets current value of property {@link #getIcon icon}.
      *
@@ -57205,6 +57695,8 @@ declare module "sap/m/MenuItem" {
 
   import { IMenuItem, IMenuItemBehavior } from "sap/m/library";
 
+  import { ID, TextDirection } from "sap/ui/core/library";
+
   import Event from "sap/ui/base/Event";
 
   import {
@@ -57213,8 +57705,6 @@ declare module "sap/m/MenuItem" {
   } from "sap/ui/base/ManagedObject";
 
   import ElementMetadata from "sap/ui/core/ElementMetadata";
-
-  import { TextDirection } from "sap/ui/core/library";
 
   /**
    * The `MenuItem` control is used for creating items for the `sap.m.Menu`. It is derived from a core `sap.ui.core.Control`.
@@ -57289,6 +57779,19 @@ declare module "sap/m/MenuItem" {
      * @returns Metadata object describing this class
      */
     static getMetadata(): ElementMetadata;
+    /**
+     * Adds some ariaDescribedBy into the association {@link #getAriaDescribedBy ariaDescribedBy}.
+     *
+     * @since 1.149
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    addAriaDescribedBy(
+      /**
+       * The ariaDescribedBy to add; if empty, nothing is inserted
+       */
+      vAriaDescribedBy: ID | Control
+    ): this;
     /**
      * Adds some endContent to the aggregation {@link #getEndContent endContent}.
      *
@@ -57422,6 +57925,12 @@ declare module "sap/m/MenuItem" {
        */
       mParameters?: object
     ): this;
+    /**
+     * Returns array of IDs of the elements which are the current targets of the association {@link #getAriaDescribedBy ariaDescribedBy}.
+     *
+     * @since 1.149
+     */
+    getAriaDescribedBy(): ID[];
     /**
      * Gets current value of property {@link #getEnabled enabled}.
      *
@@ -57631,6 +58140,14 @@ declare module "sap/m/MenuItem" {
      */
     isInteractive(): boolean;
     /**
+     * Removes all the controls in the association named {@link #getAriaDescribedBy ariaDescribedBy}.
+     *
+     * @since 1.149
+     *
+     * @returns An array of the removed elements (might be empty)
+     */
+    removeAllAriaDescribedBy(): ID[];
+    /**
      * Removes all the controls from the aggregation {@link #getEndContent endContent}.
      *
      * Additionally, it unregisters them from the hosting UIArea.
@@ -57649,6 +58166,19 @@ declare module "sap/m/MenuItem" {
      * @returns An array of the removed elements (might be empty)
      */
     removeAllItems(): IMenuItem[];
+    /**
+     * Removes an ariaDescribedBy from the association named {@link #getAriaDescribedBy ariaDescribedBy}.
+     *
+     * @since 1.149
+     *
+     * @returns The removed ariaDescribedBy or `null`
+     */
+    removeAriaDescribedBy(
+      /**
+       * The ariaDescribedBy to be removed or its index or ID
+       */
+      vAriaDescribedBy: int | ID | Control
+    ): ID | null;
     /**
      * Removes a endContent from the aggregation {@link #getEndContent endContent}.
      *
@@ -57900,6 +58430,13 @@ declare module "sap/m/MenuItem" {
      * @since 1.131
      */
     endContent?: Control[] | Control | AggregationBindingInfo | `{${string}}`;
+
+    /**
+     * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+     *
+     * @since 1.149
+     */
+    ariaDescribedBy?: Array<Control | string>;
 
     /**
      * Fired after the item has been pressed.
@@ -62215,6 +62752,11 @@ declare module "sap/m/MessageStrip" {
      * 	 - `em`
      * 	 - `strong`
      * 	 - `u`
+     * 	 - `span` (with `style` and `class` attributes)
+     *
+     * **Inline Icons:** You can embed icons within the message text using the `span` element with the SAP-icons
+     * font family. Use direct Unicode characters or the helper function {@link sap.m.MessageStripUtilities.getInlineIcon}.
+     * See the {@link sap.m.MessageStrip Samples} for usage examples.
      *
      * Default value is `false`.
      *
@@ -62413,6 +62955,11 @@ declare module "sap/m/MessageStrip" {
      * 	 - `em`
      * 	 - `strong`
      * 	 - `u`
+     * 	 - `span` (with `style` and `class` attributes)
+     *
+     * **Inline Icons:** You can embed icons within the message text using the `span` element with the SAP-icons
+     * font family. Use direct Unicode characters or the helper function {@link sap.m.MessageStripUtilities.getInlineIcon}.
+     * See the {@link sap.m.MessageStrip Samples} for usage examples.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -62584,6 +63131,11 @@ declare module "sap/m/MessageStrip" {
      * 	 - `em`
      * 	 - `strong`
      * 	 - `u`
+     * 	 - `span` (with `style` and `class` attributes)
+     *
+     * **Inline Icons:** You can embed icons within the message text using the `span` element with the SAP-icons
+     * font family. Use direct Unicode characters or the helper function {@link sap.m.MessageStripUtilities.getInlineIcon}.
+     * See the {@link sap.m.MessageStrip Samples} for usage examples.
      *
      * @since 1.50
      */
@@ -65064,7 +65616,8 @@ declare module "sap/m/MultiInput" {
       oEvent: jQuery.Event
     ): void;
     /**
-     * When press ESC, deselect all tokens and all texts
+     * When press ESC, deselect all texts and close the tokens popup if open. Token deselection is handled by
+     * the Tokenizer itself.
      */
     onsapescape(
       /**
@@ -65088,6 +65641,21 @@ declare module "sap/m/MultiInput" {
      * @deprecated As of version 1.58. replaced by N-more/N-items labels.
      */
     openMultiLine(): void;
+    /**
+     * Prevents the `change` event from firing when focus moves between the inner input element and a Token
+     * of this MultiInput's Tokenizer (e.g. via Arrow keys). The change event must only fire on ENTER or when
+     * focus leaves the MultiInput entirely.
+     *
+     * @ui5-protected Do not call from applications (only from related classes in the framework)
+     *
+     * @returns Whether the change event should be prevented.
+     */
+    preventChangeOnFocusLeave(
+      /**
+       * The event object.
+       */
+      oEvent?: jQuery.Event
+    ): boolean;
     /**
      * Removes all the controls from the aggregation {@link #getTokens tokens}.
      *
@@ -68056,8 +68624,7 @@ declare module "sap/m/NotificationListGroup" {
   /**
    * Describes the settings that can be provided to the NotificationListGroup constructor.
    */
-  export interface $NotificationListGroupSettings
-    extends $NotificationListBaseSettings {
+  export interface $NotificationListGroupSettings extends $NotificationListBaseSettings {
     /**
      * Determines if the group is collapsed or expanded.
      */
@@ -68499,8 +69066,7 @@ declare module "sap/m/NotificationListItem" {
   /**
    * Describes the settings that can be provided to the NotificationListItem constructor.
    */
-  export interface $NotificationListItemSettings
-    extends $NotificationListBaseSettings {
+  export interface $NotificationListItemSettings extends $NotificationListBaseSettings {
     /**
      * Determines the description of the NotificationListItem.
      */
@@ -68729,8 +69295,6 @@ declare module "sap/m/NumericContent" {
      * Default value is `true`.
      *
      * @since 1.73
-     * @experimental As of version 1.73. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
      *
      * @returns Value of property `adaptiveFontSize`
      */
@@ -68897,8 +69461,6 @@ declare module "sap/m/NumericContent" {
      * Default value is `true`.
      *
      * @since 1.73
-     * @experimental As of version 1.73. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
      *
      * @returns Reference to `this` in order to allow method chaining
      */
@@ -69256,8 +69818,6 @@ declare module "sap/m/NumericContent" {
      * language. When set to false the font size will always be large
      *
      * @since 1.73
-     * @experimental As of version 1.73. Disclaimer: this property is in a beta state - incompatible API changes
-     * may be done before its official public release. Use at your own discretion.
      */
     adaptiveFontSize?: boolean | PropertyBindingInfo | `{${string}}`;
 
@@ -76154,8 +76714,7 @@ declare module "sap/m/OverflowToolbarLayoutData" {
   /**
    * Describes the settings that can be provided to the OverflowToolbarLayoutData constructor.
    */
-  export interface $OverflowToolbarLayoutDataSettings
-    extends $ToolbarLayoutDataSettings {
+  export interface $OverflowToolbarLayoutDataSettings extends $ToolbarLayoutDataSettings {
     /**
      * The OverflowToolbar item can or cannot move to the overflow area
      *
@@ -76273,8 +76832,7 @@ declare module "sap/m/OverflowToolbarMenuButton" {
   /**
    * Describes the settings that can be provided to the OverflowToolbarMenuButton constructor.
    */
-  export interface $OverflowToolbarMenuButtonSettings
-    extends $MenuButtonSettings {}
+  export interface $OverflowToolbarMenuButtonSettings extends $MenuButtonSettings {}
 }
 
 declare module "sap/m/OverflowToolbarToggleButton" {
@@ -76353,8 +76911,7 @@ declare module "sap/m/OverflowToolbarToggleButton" {
   /**
    * Describes the settings that can be provided to the OverflowToolbarToggleButton constructor.
    */
-  export interface $OverflowToolbarToggleButtonSettings
-    extends $ToggleButtonSettings {}
+  export interface $OverflowToolbarToggleButtonSettings extends $ToggleButtonSettings {}
 }
 
 declare module "sap/m/OverflowToolbarTokenizer" {
@@ -76376,7 +76933,6 @@ declare module "sap/m/OverflowToolbarTokenizer" {
    * Using more than one tokenizer in the same toolbar is not recomended, as it may lead to unexpected behavior.
    * Do not use tokenizers within a toolbar if its active property is set to `true`.
    *
-   * @since 1.139
    * @experimental As of version 1.139.
    */
   export default class OverflowToolbarTokenizer
@@ -87559,8 +88115,7 @@ declare module "sap/m/PageAccessibleLandmarkInfo" {
   /**
    * Describes the settings that can be provided to the PageAccessibleLandmarkInfo constructor.
    */
-  export interface $PageAccessibleLandmarkInfoSettings
-    extends $ElementSettings {
+  export interface $PageAccessibleLandmarkInfoSettings extends $ElementSettings {
     /**
      * Landmark role of the root container of the corresponding `sap.m.Page` control.
      *
@@ -87999,7 +88554,7 @@ declare module "sap/m/PagingButton" {
 declare module "sap/m/Panel" {
   import { default as Control, $ControlSettings } from "sap/ui/core/Control";
 
-  import { PanelAccessibleRole, BackgroundDesign } from "sap/m/library";
+  import { PanelAccessibleRole, PanelBackgroundDesign } from "sap/m/library";
 
   import Toolbar from "sap/m/Toolbar";
 
@@ -88251,7 +88806,7 @@ declare module "sap/m/Panel" {
      * Gets current value of property {@link #getBackgroundDesign backgroundDesign}.
      *
      * This property is used to set the background color of the Panel. Depending on the theme you can change
-     * the state of the background from "Solid" over "Translucent" to "Transparent".
+     * the state of the background from "Solid" over "Translucent" to "Transparent" or "Contrast".
      *
      * Default value is `Translucent`.
      *
@@ -88259,7 +88814,7 @@ declare module "sap/m/Panel" {
      *
      * @returns Value of property `backgroundDesign`
      */
-    getBackgroundDesign(): BackgroundDesign;
+    getBackgroundDesign(): PanelBackgroundDesign;
     /**
      * Gets content of aggregation {@link #getContent content}.
      *
@@ -88451,7 +89006,7 @@ declare module "sap/m/Panel" {
      * Sets a new value for property {@link #getBackgroundDesign backgroundDesign}.
      *
      * This property is used to set the background color of the Panel. Depending on the theme you can change
-     * the state of the background from "Solid" over "Translucent" to "Transparent".
+     * the state of the background from "Solid" over "Translucent" to "Transparent" or "Contrast".
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -88465,7 +89020,9 @@ declare module "sap/m/Panel" {
       /**
        * New value for property `backgroundDesign`
        */
-      sBackgroundDesign?: BackgroundDesign | keyof typeof BackgroundDesign
+      sBackgroundDesign?:
+        | PanelBackgroundDesign
+        | keyof typeof PanelBackgroundDesign
     ): this;
     /**
      * Sets a new value for property {@link #getExpandable expandable}.
@@ -88671,12 +89228,12 @@ declare module "sap/m/Panel" {
 
     /**
      * This property is used to set the background color of the Panel. Depending on the theme you can change
-     * the state of the background from "Solid" over "Translucent" to "Transparent".
+     * the state of the background from "Solid" over "Translucent" to "Transparent" or "Contrast".
      *
      * @since 1.30
      */
     backgroundDesign?:
-      | (BackgroundDesign | keyof typeof BackgroundDesign)
+      | (PanelBackgroundDesign | keyof typeof PanelBackgroundDesign)
       | PropertyBindingInfo
       | `{${string}}`;
 
@@ -92639,8 +93196,7 @@ declare module "sap/m/PlanningCalendarLegend" {
   /**
    * Describes the settings that can be provided to the PlanningCalendarLegend constructor.
    */
-  export interface $PlanningCalendarLegendSettings
-    extends $CalendarLegendSettings {
+  export interface $PlanningCalendarLegendSettings extends $CalendarLegendSettings {
     /**
      * Defines the text displayed in the header of the items list. It is commonly related to the calendar days.
      */
@@ -93280,6 +93836,8 @@ declare module "sap/m/PlanningCalendarRow" {
      * **Note:** In "One month" view, the appointments are not draggable on small screen (as there they are
      * displayed as a list below the dates). Group appointments are also not draggable.
      *
+     * **Note:** Drag and drop is currently not supported for occurrences of {@link sap.ui.unified.RecurringCalendarAppointment recurring appointments}.
+     *
      * **Note:** Additional application-level code will be needed to provide a keyboard alternative to drag
      * and drop mouse interactions. One possible option is by handling {@link sap.m.PlanningCalendar#event:appointmentSelect appointmentSelect }
      * event of the `sap.m.PlanningCalendar`, as shown in the following simplified example:
@@ -93829,6 +94387,8 @@ declare module "sap/m/PlanningCalendarRow" {
      * **Note:** In "One month" view, the appointments are not draggable on small screen (as there they are
      * displayed as a list below the dates). Group appointments are also not draggable.
      *
+     * **Note:** Drag and drop is currently not supported for occurrences of {@link sap.ui.unified.RecurringCalendarAppointment recurring appointments}.
+     *
      * **Note:** Additional application-level code will be needed to provide a keyboard alternative to drag
      * and drop mouse interactions. One possible option is by handling {@link sap.m.PlanningCalendar#event:appointmentSelect appointmentSelect }
      * event of the `sap.m.PlanningCalendar`, as shown in the following simplified example:
@@ -94160,6 +94720,8 @@ declare module "sap/m/PlanningCalendarRow" {
      *
      * **Note:** In "One month" view, the appointments are not draggable on small screen (as there they are
      * displayed as a list below the dates). Group appointments are also not draggable.
+     *
+     * **Note:** Drag and drop is currently not supported for occurrences of {@link sap.ui.unified.RecurringCalendarAppointment recurring appointments}.
      *
      * **Note:** Additional application-level code will be needed to provide a keyboard alternative to drag
      * and drop mouse interactions. One possible option is by handling {@link sap.m.PlanningCalendar#event:appointmentSelect appointmentSelect }
@@ -100549,6 +101111,17 @@ declare module "sap/m/Popover" {
      */
     getLeftButton(): ID | null;
     /**
+     * Gets current value of property {@link #getMaxHeight maxHeight}.
+     *
+     * Sets the maximum height of the Popover. When the content exceeds this height, scrolling is enabled. This
+     * property applies to the entire Popover, including the header, content, and footer.
+     *
+     * @since 1.148
+     *
+     * @returns Value of property `maxHeight`
+     */
+    getMaxHeight(): CSSSize;
+    /**
      * Gets current value of property {@link #getModal modal}.
      *
      * If the popover will not be closed when tapping outside the popover. It also blocks any interaction with
@@ -101030,6 +101603,24 @@ declare module "sap/m/Popover" {
       oLeftButton: ID | Button
     ): this;
     /**
+     * Sets a new value for property {@link #getMaxHeight maxHeight}.
+     *
+     * Sets the maximum height of the Popover. When the content exceeds this height, scrolling is enabled. This
+     * property applies to the entire Popover, including the header, content, and footer.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * @since 1.148
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setMaxHeight(
+      /**
+       * New value for property `maxHeight`
+       */
+      sMaxHeight?: CSSSize
+    ): this;
+    /**
      * Setter for property `modal`. This overwrites the default setter of the property `modal` to avoid rerendering
      * the whole popover control.
      *
@@ -101328,6 +101919,14 @@ declare module "sap/m/Popover" {
      * @since 1.9.0
      */
     contentHeight?: CSSSize | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Sets the maximum height of the Popover. When the content exceeds this height, scrolling is enabled. This
+     * property applies to the entire Popover, including the header, content, and footer.
+     *
+     * @since 1.148
+     */
+    maxHeight?: CSSSize | PropertyBindingInfo | `{${string}}`;
 
     /**
      * This property is deprecated. Please use properties verticalScrolling and horizontalScrolling instead.
@@ -105096,7 +105695,7 @@ declare module "sap/m/RadioButton" {
      * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
      * otherwise it will be bound to this `sap.m.RadioButton` itself.
      *
-     * Event is triggered when the user makes a change on the radio button (selecting or unselecting it).
+     * The event is triggered when the user selects or deselects the radio button.
      *
      *
      * @returns Reference to `this` in order to allow method chaining
@@ -105122,7 +105721,7 @@ declare module "sap/m/RadioButton" {
      * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
      * otherwise it will be bound to this `sap.m.RadioButton` itself.
      *
-     * Event is triggered when the user makes a change on the radio button (selecting or unselecting it).
+     * The event is triggered when the user selects or deselects the radio button.
      *
      *
      * @returns Reference to `this` in order to allow method chaining
@@ -105759,7 +106358,7 @@ declare module "sap/m/RadioButton" {
     ariaLabelledBy?: Array<Control | string>;
 
     /**
-     * Event is triggered when the user makes a change on the radio button (selecting or unselecting it).
+     * The event is triggered when the user selects or deselects the radio button.
      */
     select?: (oEvent: RadioButton$SelectEvent) => void;
   }
@@ -105769,7 +106368,10 @@ declare module "sap/m/RadioButton" {
    */
   export interface RadioButton$SelectEventParameters {
     /**
-     * Checks whether the RadioButton is active or not.
+     * Indicates whether the RadioButton is selected.
+     *
+     * **Note:** A single RadioButton cannot be deselected by user interaction. Deselection only occurs when
+     * another RadioButton in the same group receives a selection.
      */
     selected?: boolean;
   }
@@ -110514,6 +111116,19 @@ declare module "sap/m/SearchField" {
      */
     static getMetadata(): ElementMetadata;
     /**
+     * Adds some ariaControl into the association {@link #getAriaControls ariaControls}.
+     *
+     * @since 1.150
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    addAriaControl(
+      /**
+       * The ariaControls to add; if empty, nothing is inserted
+       */
+      vAriaControl: ID | Control
+    ): this;
+    /**
      * Adds some ariaDescribedBy into the association {@link #getAriaDescribedBy ariaDescribedBy}.
      *
      *
@@ -110906,6 +111521,12 @@ declare module "sap/m/SearchField" {
       mParameters?: SearchField$SuggestEventParameters
     ): this;
     /**
+     * Returns array of IDs of the elements which are the current targets of the association {@link #getAriaControls ariaControls}.
+     *
+     * @since 1.150
+     */
+    getAriaControls(): ID[];
+    /**
      * Returns array of IDs of the elements which are the current targets of the association {@link #getAriaDescribedBy ariaDescribedBy}.
      */
     getAriaDescribedBy(): ID[];
@@ -111121,6 +111742,14 @@ declare module "sap/m/SearchField" {
       iIndex: int
     ): this;
     /**
+     * Removes all the controls in the association named {@link #getAriaControls ariaControls}.
+     *
+     * @since 1.150
+     *
+     * @returns An array of the removed elements (might be empty)
+     */
+    removeAllAriaControls(): ID[];
+    /**
      * Removes all the controls in the association named {@link #getAriaDescribedBy ariaDescribedBy}.
      *
      *
@@ -111144,6 +111773,19 @@ declare module "sap/m/SearchField" {
      * @returns An array of the removed elements (might be empty)
      */
     removeAllSuggestionItems(): SuggestionItem[];
+    /**
+     * Removes an ariaControl from the association named {@link #getAriaControls ariaControls}.
+     *
+     * @since 1.150
+     *
+     * @returns The removed ariaControl or `null`
+     */
+    removeAriaControl(
+      /**
+       * The ariaControl to be removed or its index or ID
+       */
+      vAriaControl: int | ID | Control
+    ): ID | null;
     /**
      * Removes an ariaDescribedBy from the association named {@link #getAriaDescribedBy ariaDescribedBy}.
      *
@@ -111550,6 +112192,14 @@ declare module "sap/m/SearchField" {
      * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
      */
     ariaLabelledBy?: Array<Control | string>;
+
+    /**
+     * Associates controls or IDs that are controlled by this control, as described by the WAI-ARIA attribute
+     * `aria-controls`.
+     *
+     * @since 1.150
+     */
+    ariaControls?: Array<Control | string>;
 
     /**
      * Event which is fired when the user triggers a search.
@@ -122089,8 +122739,7 @@ declare module "sap/m/semantic/DiscussInJamAction" {
   /**
    * Describes the settings that can be provided to the DiscussInJamAction constructor.
    */
-  export interface $DiscussInJamActionSettings
-    extends $SemanticButtonSettings {}
+  export interface $DiscussInJamActionSettings extends $SemanticButtonSettings {}
 }
 
 declare module "sap/m/semantic/EditAction" {
@@ -122274,8 +122923,7 @@ declare module "sap/m/semantic/FavoriteAction" {
   /**
    * Describes the settings that can be provided to the FavoriteAction constructor.
    */
-  export interface $FavoriteActionSettings
-    extends $SemanticToggleButtonSettings {}
+  export interface $FavoriteActionSettings extends $SemanticToggleButtonSettings {}
 }
 
 declare module "sap/m/semantic/FilterAction" {
@@ -124509,8 +125157,7 @@ declare module "sap/m/semantic/MultiSelectAction" {
   /**
    * Describes the settings that can be provided to the MultiSelectAction constructor.
    */
-  export interface $MultiSelectActionSettings
-    extends $SemanticToggleButtonSettings {}
+  export interface $MultiSelectActionSettings extends $SemanticToggleButtonSettings {}
 }
 
 declare module "sap/m/semantic/NegativeAction" {
@@ -126752,8 +127399,7 @@ declare module "sap/m/semantic/SemanticToggleButton" {
   /**
    * Describes the settings that can be provided to the SemanticToggleButton constructor.
    */
-  export interface $SemanticToggleButtonSettings
-    extends $SemanticButtonSettings {
+  export interface $SemanticToggleButtonSettings extends $SemanticButtonSettings {
     /**
      * The property is “true” when the control is toggled. The default state of this property is "false".
      */
@@ -130904,8 +131550,7 @@ declare module "sap/m/SinglePlanningCalendarDayView" {
   /**
    * Describes the settings that can be provided to the SinglePlanningCalendarDayView constructor.
    */
-  export interface $SinglePlanningCalendarDayViewSettings
-    extends $SinglePlanningCalendarViewSettings {}
+  export interface $SinglePlanningCalendarDayViewSettings extends $SinglePlanningCalendarViewSettings {}
 }
 
 declare module "sap/m/SinglePlanningCalendarMonthView" {
@@ -130995,8 +131640,7 @@ declare module "sap/m/SinglePlanningCalendarMonthView" {
   /**
    * Describes the settings that can be provided to the SinglePlanningCalendarMonthView constructor.
    */
-  export interface $SinglePlanningCalendarMonthViewSettings
-    extends $SinglePlanningCalendarViewSettings {}
+  export interface $SinglePlanningCalendarMonthViewSettings extends $SinglePlanningCalendarViewSettings {}
 }
 
 declare module "sap/m/SinglePlanningCalendarView" {
@@ -131233,8 +131877,7 @@ declare module "sap/m/SinglePlanningCalendarView" {
   /**
    * Describes the settings that can be provided to the SinglePlanningCalendarView constructor.
    */
-  export interface $SinglePlanningCalendarViewSettings
-    extends $ElementSettings {
+  export interface $SinglePlanningCalendarViewSettings extends $ElementSettings {
     /**
      * Indicates a unique key for the view
      */
@@ -131356,8 +131999,7 @@ declare module "sap/m/SinglePlanningCalendarWeekView" {
   /**
    * Describes the settings that can be provided to the SinglePlanningCalendarWeekView constructor.
    */
-  export interface $SinglePlanningCalendarWeekViewSettings
-    extends $SinglePlanningCalendarViewSettings {}
+  export interface $SinglePlanningCalendarWeekViewSettings extends $SinglePlanningCalendarViewSettings {}
 }
 
 declare module "sap/m/SinglePlanningCalendarWorkWeekView" {
@@ -131447,8 +132089,7 @@ declare module "sap/m/SinglePlanningCalendarWorkWeekView" {
   /**
    * Describes the settings that can be provided to the SinglePlanningCalendarWorkWeekView constructor.
    */
-  export interface $SinglePlanningCalendarWorkWeekViewSettings
-    extends $SinglePlanningCalendarViewSettings {}
+  export interface $SinglePlanningCalendarWorkWeekViewSettings extends $SinglePlanningCalendarViewSettings {}
 }
 
 declare module "sap/m/Slider" {
@@ -136023,6 +136664,19 @@ declare module "sap/m/StandardListItem" {
      */
     getInfo(): string;
     /**
+     * Gets current value of property {@link #getInfoIcon infoIcon}.
+     *
+     * Defines the icon that is shown together with the info text. The icon is displayed to the left of the
+     * info text.
+     *
+     * **Note:** This property has no visible effect if the `info` property is not set.
+     *
+     * @since 1.150
+     *
+     * @returns Value of property `infoIcon`
+     */
+    getInfoIcon(): URI;
+    /**
      * Gets current value of property {@link #getInfoState infoState}.
      *
      * Defines the state of the information text, e.g. `Error`, `Warning`, `Success`.
@@ -136111,8 +136765,7 @@ declare module "sap/m/StandardListItem" {
      * In the desktop mode, initial rendering of the control contains 300 characters along with a button to
      * expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.
      *  A wrapping of the information text is supported as of 1.95. But expanding and collapsing the information
-     * text is not possible. A wrapping of the information text is disabled if `infoStateInverted` is set to
-     * `true`.
+     * text is not possible.
      *
      * Default value is `false`.
      *
@@ -136263,6 +136916,26 @@ declare module "sap/m/StandardListItem" {
       sInfo?: string
     ): this;
     /**
+     * Sets a new value for property {@link #getInfoIcon infoIcon}.
+     *
+     * Defines the icon that is shown together with the info text. The icon is displayed to the left of the
+     * info text.
+     *
+     * **Note:** This property has no visible effect if the `info` property is not set.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * @since 1.150
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setInfoIcon(
+      /**
+       * New value for property `infoIcon`
+       */
+      sInfoIcon?: URI
+    ): this;
+    /**
      * Sets a new value for property {@link #getInfoState infoState}.
      *
      * Defines the state of the information text, e.g. `Error`, `Warning`, `Success`.
@@ -136393,8 +137066,7 @@ declare module "sap/m/StandardListItem" {
      * In the desktop mode, initial rendering of the control contains 300 characters along with a button to
      * expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.
      *  A wrapping of the information text is supported as of 1.95. But expanding and collapsing the information
-     * text is not possible. A wrapping of the information text is disabled if `infoStateInverted` is set to
-     * `true`.
+     * text is not possible.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -136466,6 +137138,16 @@ declare module "sap/m/StandardListItem" {
       | `{${string}}`;
 
     /**
+     * Defines the icon that is shown together with the info text. The icon is displayed to the left of the
+     * info text.
+     *
+     * **Note:** This property has no visible effect if the `info` property is not set.
+     *
+     * @since 1.150
+     */
+    infoIcon?: URI | PropertyBindingInfo | `{${string}}`;
+
+    /**
      * By default, the title size adapts to the available space and gets bigger if the description is empty.
      * If you have list items with and without descriptions, this results in titles with different sizes. In
      * this case, it can be better to switch the size adaption off by setting this property to `false`.
@@ -136504,8 +137186,7 @@ declare module "sap/m/StandardListItem" {
      * In the desktop mode, initial rendering of the control contains 300 characters along with a button to
      * expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.
      *  A wrapping of the information text is supported as of 1.95. But expanding and collapsing the information
-     * text is not possible. A wrapping of the information text is disabled if `infoStateInverted` is set to
-     * `true`.
+     * text is not possible.
      *
      * @since 1.67
      */
@@ -138579,6 +139260,19 @@ declare module "sap/m/Switch" {
      */
     getCustomTextOn(): string;
     /**
+     * Gets current value of property {@link #getEditable editable}.
+     *
+     * Specifies whether the user shall be allowed to change the state of the switch. When set to `false`, the
+     * switch is in read-only mode and can still be focused and the user can copy the text from it.
+     *
+     * Default value is `true`.
+     *
+     * @since 1.147.0
+     *
+     * @returns Value of property `editable`
+     */
+    getEditable(): boolean;
+    /**
      * Gets current value of property {@link #getEnabled enabled}.
      *
      * Whether the switch is enabled.
@@ -138685,6 +139379,26 @@ declare module "sap/m/Switch" {
        * New value for property `customTextOn`
        */
       sCustomTextOn?: string
+    ): this;
+    /**
+     * Sets a new value for property {@link #getEditable editable}.
+     *
+     * Specifies whether the user shall be allowed to change the state of the switch. When set to `false`, the
+     * switch is in read-only mode and can still be focused and the user can copy the text from it.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `true`.
+     *
+     * @since 1.147.0
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setEditable(
+      /**
+       * New value for property `editable`
+       */
+      bEditable?: boolean
     ): this;
     /**
      * Sets a new value for property {@link #getEnabled enabled}.
@@ -138803,6 +139517,14 @@ declare module "sap/m/Switch" {
       | (SwitchType | keyof typeof SwitchType)
       | PropertyBindingInfo
       | `{${string}}`;
+
+    /**
+     * Specifies whether the user shall be allowed to change the state of the switch. When set to `false`, the
+     * switch is in read-only mode and can still be focused and the user can copy the text from it.
+     *
+     * @since 1.147.0
+     */
+    editable?: boolean | PropertyBindingInfo | `{${string}}`;
 
     /**
      * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
@@ -140342,8 +141064,7 @@ declare module "sap/m/Table" {
     /**
      * Gets current value of property {@link #getAlternateRowColors alternateRowColors}.
      *
-     * Enables alternating table row colors. **Note:** This property can only be used with the Belize and Belize
-     * Deep themes. Alternate row coloring is not available for the High Contrast Black/White themes.
+     * Enables alternating table row colors.
      *
      * Default value is `false`.
      *
@@ -140566,8 +141287,7 @@ declare module "sap/m/Table" {
     /**
      * Sets a new value for property {@link #getAlternateRowColors alternateRowColors}.
      *
-     * Enables alternating table row colors. **Note:** This property can only be used with the Belize and Belize
-     * Deep themes. Alternate row coloring is not available for the High Contrast Black/White themes.
+     * Enables alternating table row colors.
      *
      * When called with a value of `null` or `undefined`, the default value of the property will be restored.
      *
@@ -140843,8 +141563,7 @@ declare module "sap/m/Table" {
     showOverlay?: boolean | PropertyBindingInfo | `{${string}}`;
 
     /**
-     * Enables alternating table row colors. **Note:** This property can only be used with the Belize and Belize
-     * Deep themes. Alternate row coloring is not available for the High Contrast Black/White themes.
+     * Enables alternating table row colors.
      *
      * @since 1.52
      */
@@ -140946,8 +141665,7 @@ declare module "sap/m/Table" {
   /**
    * Parameters of the Table#beforeOpenContextMenu event.
    */
-  export interface Table$BeforeOpenContextMenuEventParameters
-    extends ListBase$BeforeOpenContextMenuEventParameters {
+  export interface Table$BeforeOpenContextMenuEventParameters extends ListBase$BeforeOpenContextMenuEventParameters {
     /**
      * Column in which the context menu was opened. **Note:** This parameter might be undefined for the items
      * that are not part of a column definition.
@@ -144980,6 +145698,310 @@ declare module "sap/m/table/ColumnWidthController" {
   }
 }
 
+declare module "sap/m/table/Title" {
+  import { default as Control, $ControlSettings } from "sap/ui/core/Control";
+
+  import { ITitle, IShrinkable } from "sap/ui/core/library";
+
+  import ElementMetadata from "sap/ui/core/ElementMetadata";
+
+  import Title1 from "sap/m/Title";
+
+  import { PropertyBindingInfo } from "sap/ui/base/ManagedObject";
+
+  /**
+   * A composite title control intended to display a table title along with optional total and selected row
+   * counts.
+   *
+   * The `sap.m.table.Title` control renders the provided `sap.m.Title` control and optionally displays the
+   * table's total row count, the selected row count, or both independently.
+   *
+   * @since 1.147
+   */
+  export default class Title extends Control implements ITitle, IShrinkable {
+    __implements__sap_ui_core_ITitle: boolean;
+    __implements__sap_ui_core_IShrinkable: boolean;
+    /**
+     * Constructor for a new `sap.m.table.Title`.
+     *
+     * Accepts an object literal `mSettings` that defines initial property values, aggregated and associated
+     * objects as well as event handlers. See {@link sap.ui.base.ManagedObject#constructor} for a general description
+     * of the syntax of the settings object.
+     */
+    constructor(
+      /**
+       * Initial settings for the new control
+       */
+      mSettings?: $TitleSettings
+    );
+    /**
+     * Constructor for a new `sap.m.table.Title`.
+     *
+     * Accepts an object literal `mSettings` that defines initial property values, aggregated and associated
+     * objects as well as event handlers. See {@link sap.ui.base.ManagedObject#constructor} for a general description
+     * of the syntax of the settings object.
+     */
+    constructor(
+      /**
+       * ID for the new control, generated automatically if no ID is given
+       */
+      sId?: string,
+      /**
+       * Initial settings for the new control
+       */
+      mSettings?: $TitleSettings
+    );
+
+    /**
+     * Creates a new subclass of class sap.m.table.Title with name `sClassName` and enriches it with the information
+     * contained in `oClassInfo`.
+     *
+     * `oClassInfo` might contain the same kind of information as described in {@link sap.ui.core.Control.extend}.
+     *
+     *
+     * @returns Created class / constructor function
+     */
+    static extend<T extends Record<string, unknown>>(
+      /**
+       * Name of the class being created
+       */
+      sClassName: string,
+      /**
+       * Object literal with information about the class
+       */
+      oClassInfo?: sap.ClassInfo<T, Title>,
+      /**
+       * Constructor function for the metadata object; if not given, it defaults to the metadata implementation
+       * used by this class
+       */
+      FNMetaImpl?: Function
+    ): Function;
+    /**
+     * Returns a metadata object for class sap.m.table.Title.
+     *
+     *
+     * @returns Metadata object describing this class
+     */
+    static getMetadata(): ElementMetadata;
+    /**
+     * Destroys the title in the aggregation {@link #getTitle title}.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    destroyTitle(): this;
+    /**
+     * Gets current value of property {@link #getSelectedCount selectedCount}.
+     *
+     * Defines the value that is displayed as the selected row count.
+     *
+     * **Note:** A value of 0 indicates that no rows are selected, while a negative value indicates that the
+     * selected count is unknown. Although these cases are not displayed to the user, they are handled differently
+     * for accessibility reasons.
+     *
+     * Default value is `0`.
+     *
+     *
+     * @returns Value of property `selectedCount`
+     */
+    getSelectedCount(): int;
+    /**
+     * Gets current value of property {@link #getShowExtendedView showExtendedView}.
+     *
+     * Toggles between compact and extended display modes for the `selectedCount` and `totalCount`.
+     *
+     *
+     * 	 - **Compact mode (`false`)**: Displays counts in a condensed format.
+     * 	 - **Extended mode (`true`)**: Displays counts with separate descriptive labels.
+     *
+     * Default value is `false`.
+     *
+     *
+     * @returns Value of property `showExtendedView`
+     */
+    getShowExtendedView(): boolean;
+    /**
+     * Gets content of aggregation {@link #getTitle title}.
+     *
+     * Sets the title control, which is displayed in the toolbar as usual.
+     *
+     * **Note:** You must set a `title` to use this control.
+     */
+    getTitle(): Title1;
+    /**
+     * Gets current value of property {@link #getTotalCount totalCount}.
+     *
+     * Defines the value that is displayed as the total row count.
+     *
+     * **Note:** A value of 0 represents an empty table, while a negative value indicates that the total count
+     * is unknown. Although both cases are not displayed to the user, they are handled differently for accessibility
+     * reasons.
+     *
+     * Default value is `0`.
+     *
+     *
+     * @returns Value of property `totalCount`
+     */
+    getTotalCount(): int;
+    /**
+     * Gets current value of property {@link #getVisible visible}.
+     *
+     * Determines whether the control is visible.
+     *
+     * **Note:** If set to `false`, the control is hidden but still rendered for accessibility reasons.
+     *
+     * Default value is `true`.
+     *
+     *
+     * @returns Value of property `visible`
+     */
+    getVisible(): boolean;
+    /**
+     * Sets a new value for property {@link #getSelectedCount selectedCount}.
+     *
+     * Defines the value that is displayed as the selected row count.
+     *
+     * **Note:** A value of 0 indicates that no rows are selected, while a negative value indicates that the
+     * selected count is unknown. Although these cases are not displayed to the user, they are handled differently
+     * for accessibility reasons.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `0`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setSelectedCount(
+      /**
+       * New value for property `selectedCount`
+       */
+      iSelectedCount?: int
+    ): this;
+    /**
+     * Sets a new value for property {@link #getShowExtendedView showExtendedView}.
+     *
+     * Toggles between compact and extended display modes for the `selectedCount` and `totalCount`.
+     *
+     *
+     * 	 - **Compact mode (`false`)**: Displays counts in a condensed format.
+     * 	 - **Extended mode (`true`)**: Displays counts with separate descriptive labels.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `false`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setShowExtendedView(
+      /**
+       * New value for property `showExtendedView`
+       */
+      bShowExtendedView?: boolean
+    ): this;
+    /**
+     * Sets the aggregated {@link #getTitle title}.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setTitle(
+      /**
+       * The title to set
+       */
+      oTitle: Title1
+    ): this;
+    /**
+     * Sets a new value for property {@link #getTotalCount totalCount}.
+     *
+     * Defines the value that is displayed as the total row count.
+     *
+     * **Note:** A value of 0 represents an empty table, while a negative value indicates that the total count
+     * is unknown. Although both cases are not displayed to the user, they are handled differently for accessibility
+     * reasons.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `0`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setTotalCount(
+      /**
+       * New value for property `totalCount`
+       */
+      iTotalCount?: int
+    ): this;
+    /**
+     * Sets a new value for property {@link #getVisible visible}.
+     *
+     * Determines whether the control is visible.
+     *
+     * **Note:** If set to `false`, the control is hidden but still rendered for accessibility reasons.
+     *
+     * When called with a value of `null` or `undefined`, the default value of the property will be restored.
+     *
+     * Default value is `true`.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    setVisible(
+      /**
+       * New value for property `visible`
+       */
+      bVisible?: boolean
+    ): this;
+  }
+  /**
+   * Describes the settings that can be provided to the Title constructor.
+   */
+  export interface $TitleSettings extends $ControlSettings {
+    /**
+     * Defines the value that is displayed as the total row count.
+     *
+     * **Note:** A value of 0 represents an empty table, while a negative value indicates that the total count
+     * is unknown. Although both cases are not displayed to the user, they are handled differently for accessibility
+     * reasons.
+     */
+    totalCount?: int | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Defines the value that is displayed as the selected row count.
+     *
+     * **Note:** A value of 0 indicates that no rows are selected, while a negative value indicates that the
+     * selected count is unknown. Although these cases are not displayed to the user, they are handled differently
+     * for accessibility reasons.
+     */
+    selectedCount?: int | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Toggles between compact and extended display modes for the `selectedCount` and `totalCount`.
+     *
+     *
+     * 	 - **Compact mode (`false`)**: Displays counts in a condensed format.
+     * 	 - **Extended mode (`true`)**: Displays counts with separate descriptive labels.
+     */
+    showExtendedView?: boolean | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Determines whether the control is visible.
+     *
+     * **Note:** If set to `false`, the control is hidden but still rendered for accessibility reasons.
+     */
+    visible?: boolean | PropertyBindingInfo | `{${string}}`;
+
+    /**
+     * Sets the title control, which is displayed in the toolbar as usual.
+     *
+     * **Note:** You must set a `title` to use this control.
+     */
+    title?: Title1;
+  }
+}
+
 declare module "sap/m/TablePersoController" {
   import {
     default as ManagedObject,
@@ -145486,8 +146508,7 @@ declare module "sap/m/TablePersoController" {
    * @deprecated As of version 1.115. Please use the {@link sap.m.p13n.Engine Engine} for personalization
    * instead.
    */
-  export interface $TablePersoControllerSettings
-    extends $ManagedObjectSettings {
+  export interface $TablePersoControllerSettings extends $ManagedObjectSettings {
     contentWidth?: CSSSize | PropertyBindingInfo | `{${string}}`;
 
     contentHeight?: CSSSize | PropertyBindingInfo | `{${string}}`;
@@ -147392,8 +148413,7 @@ declare module "sap/m/TableSelectDialog" {
   /**
    * Describes the settings that can be provided to the TableSelectDialog constructor.
    */
-  export interface $TableSelectDialogSettings
-    extends $SelectDialogBaseSettings {
+  export interface $TableSelectDialogSettings extends $SelectDialogBaseSettings {
     /**
      * Specifies the title text in the dialog header.
      */
@@ -149119,7 +150139,6 @@ declare module "sap/m/TileAttribute" {
    * Holds detail of an attribute used in the ActionTile.
    *
    * @since 1.122
-   * @experimental As of version 1.122.
    */
   export default class TileAttribute extends Control {
     /**
@@ -149288,8 +150307,6 @@ declare module "sap/m/TileAttribute" {
   }
   /**
    * Describes the settings that can be provided to the TileAttribute constructor.
-   *
-   * @experimental As of version 1.122.
    */
   export interface $TileAttributeSettings extends $ControlSettings {
     /**
@@ -149983,9 +151000,9 @@ declare module "sap/m/TileContent" {
   } from "sap/ui/base/ManagedObject";
 
   import {
+    Priority,
     ValueColor,
     FrameType,
-    Priority,
     Size,
     LoadState,
   } from "sap/m/library";
@@ -150082,6 +151099,30 @@ declare module "sap/m/TileContent" {
      * @returns Reference to `this` in order to allow method chaining
      */
     destroyContent(): this;
+    /**
+     * Gets current value of property {@link #getAdditionalPriority additionalPriority}.
+     *
+     * Sets the priority level for the additional priority badge. Determines the state and icon of the badge.
+     * Works only for generic tiles with ActionMode or Article Mode where FrameType Stretch is enabled.
+     *
+     * Default value is `None`.
+     *
+     * @since 1.151
+     *
+     * @returns Value of property `additionalPriority`
+     */
+    getAdditionalPriority(): Priority;
+    /**
+     * Gets current value of property {@link #getAdditionalPriorityText additionalPriorityText}.
+     *
+     * Sets the text within the additional priority badge that is displayed next to the priority badge. Works
+     * only in Generic Tiles in ActionMode or Article Mode containing FrameType Stretch.
+     *
+     * @since 1.151
+     *
+     * @returns Value of property `additionalPriorityText`
+     */
+    getAdditionalPriorityText(): string;
     /**
      * Gets content of aggregation {@link #getContent content}.
      *
@@ -150190,6 +151231,30 @@ declare module "sap/m/TileContent" {
      * @returns Value of property `unit`
      */
     getUnit(): string;
+    /**
+     * Sets the priority level for the additional priority badge.
+     *
+     *
+     * @returns Reference to the current instance for method chaining.
+     */
+    setAdditionalPriority(
+      /**
+       * The priority level.
+       */
+      sPriority: Priority | keyof typeof Priority
+    ): this;
+    /**
+     * Sets the text for the additional priority badge.
+     *
+     *
+     * @returns Reference to the current instance for method chaining.
+     */
+    setAdditionalPriorityText(
+      /**
+       * The text to be displayed on the badge.
+       */
+      sPriorityText: string
+    ): this;
     /**
      * Sets the aggregated {@link #getContent content}.
      *
@@ -150453,6 +151518,25 @@ declare module "sap/m/TileContent" {
      * @since 1.103
      */
     priorityText?: string | PropertyBindingInfo;
+
+    /**
+     * Sets the priority level for the additional priority badge. Determines the state and icon of the badge.
+     * Works only for generic tiles with ActionMode or Article Mode where FrameType Stretch is enabled.
+     *
+     * @since 1.151
+     */
+    additionalPriority?:
+      | (Priority | keyof typeof Priority)
+      | PropertyBindingInfo
+      | `{${string}}`;
+
+    /**
+     * Sets the text within the additional priority badge that is displayed next to the priority badge. Works
+     * only in Generic Tiles in ActionMode or Article Mode containing FrameType Stretch.
+     *
+     * @since 1.151
+     */
+    additionalPriorityText?: string | PropertyBindingInfo;
 
     /**
      * The load status.
@@ -151905,8 +152989,7 @@ declare module "sap/m/TimePicker" {
   /**
    * Parameters of the TimePicker#change event.
    */
-  export interface TimePicker$ChangeEventParameters
-    extends InputBase$ChangeEventParameters {
+  export interface TimePicker$ChangeEventParameters extends InputBase$ChangeEventParameters {
     /**
      * Indicator for a valid time
      */
@@ -151924,8 +153007,7 @@ declare module "sap/m/TimePicker" {
   /**
    * Parameters of the TimePicker#liveChange event.
    */
-  export interface TimePicker$LiveChangeEventParameters
-    extends DateTimeField$LiveChangeEventParameters {}
+  export interface TimePicker$LiveChangeEventParameters extends DateTimeField$LiveChangeEventParameters {}
 
   /**
    * Event object of the TimePicker#liveChange event.
@@ -152089,6 +153171,8 @@ declare module "sap/m/TimePickerClocks" {
 declare module "sap/m/TimePickerInputs" {
   import { default as Control, $ControlSettings } from "sap/ui/core/Control";
 
+  import Event from "sap/ui/base/Event";
+
   import ElementMetadata from "sap/ui/core/ElementMetadata";
 
   import UI5Date from "sap/ui/core/date/UI5Date";
@@ -152162,6 +153246,90 @@ declare module "sap/m/TimePickerInputs" {
      */
     static getMetadata(): ElementMetadata;
     /**
+     * Attaches event handler `fnFunction` to the {@link #event:change change} event of this `sap.m.TimePickerInputs`.
+     *
+     * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
+     * otherwise it will be bound to this `sap.m.TimePickerInputs` itself.
+     *
+     * Fired when the user commits a time edit — via digit / arrow / backspace / delete keys or by selecting
+     * a different AM/PM. Consumers can use this to react to user interaction with the time inputs, since the
+     * inner Input controls do not fire their own change event (onkeydown is intercepted and values are written
+     * directly through setValue).
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    attachChange(
+      /**
+       * An application-specific payload object that will be passed to the event handler along with the event
+       * object when firing the event
+       */
+      oData: object,
+      /**
+       * The function to be called when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object to call the event handler with. Defaults to this `sap.m.TimePickerInputs` itself
+       */
+      oListener?: object
+    ): this;
+    /**
+     * Attaches event handler `fnFunction` to the {@link #event:change change} event of this `sap.m.TimePickerInputs`.
+     *
+     * When called, the context of the event handler (its `this`) will be bound to `oListener` if specified,
+     * otherwise it will be bound to this `sap.m.TimePickerInputs` itself.
+     *
+     * Fired when the user commits a time edit — via digit / arrow / backspace / delete keys or by selecting
+     * a different AM/PM. Consumers can use this to react to user interaction with the time inputs, since the
+     * inner Input controls do not fire their own change event (onkeydown is intercepted and values are written
+     * directly through setValue).
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    attachChange(
+      /**
+       * The function to be called when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object to call the event handler with. Defaults to this `sap.m.TimePickerInputs` itself
+       */
+      oListener?: object
+    ): this;
+    /**
+     * Detaches event handler `fnFunction` from the {@link #event:change change} event of this `sap.m.TimePickerInputs`.
+     *
+     * The passed function and listener object must match the ones used for event registration.
+     *
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    detachChange(
+      /**
+       * The function to be called, when the event occurs
+       */
+      fnFunction: (p1: Event) => void,
+      /**
+       * Context object on which the given function had to be called
+       */
+      oListener?: object
+    ): this;
+    /**
+     * Fires event {@link #event:change change} to attached listeners.
+     *
+     * @ui5-protected Do not call from applications (only from related classes in the framework)
+     *
+     * @returns Reference to `this` in order to allow method chaining
+     */
+    fireChange(
+      /**
+       * Parameters to pass along with the event
+       */
+      mParameters?: object
+    ): this;
+    /**
      * Gets the time values from the clocks, as a date object.
      *
      *
@@ -152184,7 +153352,28 @@ declare module "sap/m/TimePickerInputs" {
   /**
    * Describes the settings that can be provided to the TimePickerInputs constructor.
    */
-  export interface $TimePickerInputsSettings extends $ControlSettings {}
+  export interface $TimePickerInputsSettings extends $ControlSettings {
+    /**
+     * Fired when the user commits a time edit — via digit / arrow / backspace / delete keys or by selecting
+     * a different AM/PM. Consumers can use this to react to user interaction with the time inputs, since the
+     * inner Input controls do not fire their own change event (onkeydown is intercepted and values are written
+     * directly through setValue).
+     */
+    change?: (oEvent: Event) => void;
+  }
+
+  /**
+   * Parameters of the TimePickerInputs#change event.
+   */
+  export interface TimePickerInputs$ChangeEventParameters {}
+
+  /**
+   * Event object of the TimePickerInputs#change event.
+   */
+  export type TimePickerInputs$ChangeEvent = Event<
+    TimePickerInputs$ChangeEventParameters,
+    TimePickerInputs
+  >;
 }
 
 declare module "sap/m/TimePickerSliders" {
@@ -153508,8 +154697,7 @@ declare module "sap/m/ToggleButton" {
   /**
    * Parameters of the ToggleButton#press event.
    */
-  export interface ToggleButton$PressEventParameters
-    extends Button$PressEventParameters {
+  export interface ToggleButton$PressEventParameters extends Button$PressEventParameters {
     /**
      * The current pressed state of the control.
      */
@@ -157309,7 +158497,6 @@ declare module "sap/m/upload/Column" {
    * control.
    *
    * @since 1.120
-   * @experimental As of version 1.120.
    */
   export default class Column extends Column1 {
     /**
@@ -157522,8 +158709,6 @@ declare module "sap/m/upload/Column" {
   }
   /**
    * Describes the settings that can be provided to the Column constructor.
-   *
-   * @experimental As of version 1.120.
    */
   export interface $ColumnSettings extends $ColumnSettings1 {
     /**
@@ -157573,14 +158758,14 @@ declare module "sap/m/upload/FilePreviewDialog" {
    *
    * Supported File Types for Preview:
    *
-   * Following are the supported file types that can be previewed:
+   * The following file types are supported for preview:
    *
    *
    * 	 - Image (PNG, JPEG, BMP, GIF)
    * 	 - PDF
    * 	 - Text (Txt)
-   * 	 - Video (MP4, MPEG, Quicktime, MsVideo)
-   * 	 - SAP 3D Visual models (VDS)
+   * 	 - Video (MP4, QuickTime, WebM, OGG) — playback depends on browser codec support.
+   * 	 - SAP 3D Visual models (VDS) — requires {@link sap.ui.vk} and WebGL support.
    *
    * @since 1.120
    */
@@ -157671,6 +158856,9 @@ declare module "sap/m/upload/FilePreviewDialog" {
      *
      * Custom buttons, to be displayed in the preview dialog footer.
      * Control by default adds two buttons (download and close).
+     * **Note:** Buttons added using this aggregation cannot use `sap.m.ButtonType.Emphasized` since the Download
+     * button is already rendered as emphasized to comply with the SAP Fiori action placement guidelines. Adding
+     * another emphasized button violates the single-primary-action pattern.
      */
     getAdditionalFooterButtons(): Button[];
     /**
@@ -157978,6 +159166,9 @@ declare module "sap/m/upload/FilePreviewDialog" {
     /**
      * Custom buttons, to be displayed in the preview dialog footer.
      * Control by default adds two buttons (download and close).
+     * **Note:** Buttons added using this aggregation cannot use `sap.m.ButtonType.Emphasized` since the Download
+     * button is already rendered as emphasized to comply with the SAP Fiori action placement guidelines. Adding
+     * another emphasized button violates the single-primary-action pattern.
      */
     additionalFooterButtons?:
       | Button[]
@@ -165274,8 +166465,7 @@ declare module "sap/m/upload/UploadSetToolbarPlaceholder" {
    *
    * @deprecated As of version 1.129. replaced by {@link sap.m.upload.ActionsPlaceholder}
    */
-  export interface $UploadSetToolbarPlaceholderSettings
-    extends $ControlSettings {}
+  export interface $UploadSetToolbarPlaceholderSettings extends $ControlSettings {}
 }
 
 declare module "sap/m/UploadCollection" {
@@ -169086,8 +170276,7 @@ declare module "sap/m/UploadCollectionToolbarPlaceholder" {
    *
    * @deprecated As of version 1.88. replaced by {@link sap.m.upload.UploadSetToolbarPlaceholder}.
    */
-  export interface $UploadCollectionToolbarPlaceholderSettings
-    extends $ControlSettings {}
+  export interface $UploadCollectionToolbarPlaceholderSettings extends $ControlSettings {}
 }
 
 declare module "sap/m/VariantItem" {
@@ -171193,8 +172382,7 @@ declare module "sap/m/ViewSettingsCustomItem" {
   /**
    * Describes the settings that can be provided to the ViewSettingsCustomItem constructor.
    */
-  export interface $ViewSettingsCustomItemSettings
-    extends $ViewSettingsItemSettings {
+  export interface $ViewSettingsCustomItemSettings extends $ViewSettingsItemSettings {
     /**
      * The number of currently active filters for this custom filter item. It will be displayed in the filter
      * list of the ViewSettingsDialog to represent the filter state of the custom control.
@@ -171665,8 +172853,7 @@ declare module "sap/m/ViewSettingsFilterItem" {
   /**
    * Describes the settings that can be provided to the ViewSettingsFilterItem constructor.
    */
-  export interface $ViewSettingsFilterItemSettings
-    extends $ViewSettingsItemSettings {
+  export interface $ViewSettingsFilterItemSettings extends $ViewSettingsItemSettings {
     /**
      * If set to (true), multi selection will be allowed for the items aggregation.
      */
@@ -174958,6 +176145,8 @@ declare namespace sap {
     "sap/m/table/columnmenu/QuickTotalItem": undefined;
 
     "sap/m/table/ColumnWidthController": undefined;
+
+    "sap/m/table/Title": undefined;
 
     "sap/m/table/Util": undefined;
 

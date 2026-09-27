@@ -53,6 +53,7 @@ export interface WebGLProgramParameters {
 
     normalMapObjectSpace: boolean;
     normalMapTangentSpace: boolean;
+    packedNormalMap: boolean;
 
     metalnessMap: boolean;
     roughnessMap: boolean;
@@ -66,6 +67,7 @@ export interface WebGLProgramParameters {
     clearcoatRoughnessMap: boolean;
 
     dispersion: boolean;
+    retroreflection: boolean;
 
     iridescence: boolean;
     iridescenceMap: boolean;
@@ -130,6 +132,7 @@ export interface WebGLProgramParameters {
     //
 
     vertexTangents: boolean;
+    vertexNormals: boolean;
     vertexColors: boolean;
     vertexAlphas: boolean;
     vertexUv1s: boolean;
@@ -150,12 +153,15 @@ export interface WebGLProgramParameters {
 
     skinning: boolean;
 
+    hasPositionAttribute: boolean;
+
     morphTargets: boolean;
     morphNormals: boolean;
     morphColors: boolean;
     morphTargetsCount: number;
     morphTextureStride: number;
 
+    numSunLights: number;
     numDirLights: number;
     numPointLights: number;
     numSpotLights: number;
@@ -163,12 +169,15 @@ export interface WebGLProgramParameters {
     numRectAreaLights: number;
     numHemiLights: number;
 
+    numSunLightShadows: number;
     numDirLightShadows: number;
     numPointLightShadows: number;
     numSpotLightShadows: number;
     numSpotLightShadowsWithMaps: number;
 
     numLightProbes: number;
+
+    numLightProbeGrids: number;
 
     numClippingPlanes: number;
     numClipIntersection: number;
@@ -223,6 +232,7 @@ export class WebGLPrograms {
         shadows: Light[],
         scene: Scene,
         object: Object3D,
+        lightProbeGrids: unknown[],
     ): WebGLProgramParameters;
 
     getProgramCacheKey(parameters: WebGLProgramParameters): string;
